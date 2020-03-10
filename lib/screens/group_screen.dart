@@ -12,16 +12,32 @@ class GroupScreen extends StatelessWidget {
     final thisGroupMembers = memberData.members
         .where((member) => member.groupName == gName)
         .toList();
+    final thisGroupAvailableMembers = memberData.availableMembers
+        .where((member) => member.groupName == gName)
+        .toList();
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: <Widget>[
-          Padding(
+          Container(
             padding: const EdgeInsets.all(8.0),
-            child: Row( children: [
-              Text('Is absent?'),
-             
+            child: Column(children: [
+              Card(
+                              child: ListTile(
+                    title: Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text('Members in this group: ${thisGroupMembers.length}'),
+                    Text('Members present: ${thisGroupAvailableMembers.length}'),
+                  ],
+                )),
+              ),
+              Divider(),
+              Row(
+                children: [
+                  Text('Is absent?'),
+                ],
+              )
             ]),
           ),
           Divider(),
