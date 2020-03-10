@@ -41,7 +41,13 @@ class _HistoryEntryState extends State<HistoryEntry> {
                       color: Colors.red,
                       child: Column(
                         children: [
-                          ...i.map((k) => (Card(child: Text(k.memberName)))),
+                          ...i.map(
+                            (k) => (Card(
+                              child: ListTile(
+                                title: Text(k.memberName),
+                              ),
+                            )),
+                          ),
                         ],
                       ),
                     )))

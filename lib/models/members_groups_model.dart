@@ -22,14 +22,14 @@ class MembersGroupsModel with ChangeNotifier {
     GroupMember(
         memberId: 'm2', memberName: 'Pentti Urhola', groupName: 'Kusipäät'),
     GroupMember(memberId: 'm2', memberName: '1', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm2', memberName: '2', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm2', memberName: '3', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm2', memberName: '4', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm2', memberName: '5', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm2', memberName: '6', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm2', memberName: '7', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm2', memberName: '8', groupName: 'Mustikat'),
-    GroupMember(memberId: 'm2', memberName: '9', groupName: 'Mustikat'),
+    GroupMember(memberId: 'm3', memberName: '2', groupName: 'Kusipäät'),
+    GroupMember(memberId: 'm4', memberName: '3', groupName: 'Kusipäät'),
+    GroupMember(memberId: 'm5', memberName: '4', groupName: 'Kusipäät'),
+    GroupMember(memberId: 'm6', memberName: '5', groupName: 'Kusipäät'),
+    GroupMember(memberId: 'm7', memberName: '6', groupName: 'Kusipäät'),
+    GroupMember(memberId: 'm8', memberName: '7', groupName: 'Kusipäät'),
+    GroupMember(memberId: 'm9', memberName: '8', groupName: 'Mustikat'),
+    GroupMember(memberId: 'm10', memberName: '9', groupName: 'Mustikat'),
   ];
 
   List<Group> get groups {
