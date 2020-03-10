@@ -51,6 +51,9 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
       // var numberOfGroups = 4;
       // Get size of groups
       var groupSize = (_availableMembers.length / numberOfGroups).round();
+      if(groupSize*numberOfGroups > _availableMembers.length){
+        groupSize = groupSize - 1;
+      }
 // divide into groups
       for (var i = 0; i < numberOfGroups; i += 1) {
         if (_availableMembers.length >= groupSize) {
