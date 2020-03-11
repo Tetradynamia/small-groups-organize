@@ -11,17 +11,21 @@ class ShuffleItem extends StatelessWidget {
         children: [
           ..._currentInGroups
               .map((subGroup) => (Card(
-                    color: Colors.red,
                     child: Column(
                       children: [
-                        Text(
-                          'In-group ${_currentInGroups.indexOf(subGroup) + 1}:',
-                          style: TextStyle(
-                            fontSize: 16,
+                        Card(
+                          color: Theme.of(context).primaryColor,
+                          child: ListTile(
+                            title: Text(
+                              'In-group ${_currentInGroups.indexOf(subGroup) + 1}:',
+                              style: TextStyle(
+                                fontSize: 16, color: Colors.white
+                              ),
+                            ),
                           ),
                         ),
-                        ...subGroup.map(
-                            (member) => (Card(child: Text(member.memberName))))
+                        ...subGroup.map((member) => (Card(
+                            child: ListTile(title: Text(member.memberName)))))
                       ],
                     ),
                   )))
