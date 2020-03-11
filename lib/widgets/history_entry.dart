@@ -67,7 +67,38 @@ class _HistoryEntryState extends State<HistoryEntry> {
                 IconButton(
                   icon: Icon(Icons.delete, color: Theme.of(context).errorColor,),
                   alignment: Alignment.topRight,
-                  onPressed: () => historyData.removeFromHistory(widget.avain),
+                  onPressed: () {
+                        return showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                                  title: Text('Confirm delete'),
+                                  content: Text(
+                                      'Are you sure you want to delete?'),
+                                  actions: <Widget>[
+                                    FlatButton(
+                                      onPressed: () {
+                                        historyData.removeFromHistory(widget.avain);
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.delete,
+                                            color: Theme.of(context).errorColor,
+                                          ),
+                                          Text('Delete')
+                                        ],
+                                      ),
+                                    ),
+                                    FlatButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Cancel'),
+                                    )
+                                  ],
+                                ));
+                      },
                 ),
               ],
             )
