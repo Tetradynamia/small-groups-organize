@@ -27,8 +27,7 @@ class GroupScreen extends StatelessWidget {
                               child: ListTile(
                     title: Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('Members in this group: ${thisGroupMembers.length}'),
-                    Text('Members present: ${thisGroupAvailableMembers.length}'),
+                    Text('${thisGroupAvailableMembers.length} / ${thisGroupMembers.length} members present'),
                   ],
                 )),
               ),

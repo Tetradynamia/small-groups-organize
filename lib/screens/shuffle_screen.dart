@@ -252,7 +252,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                               },
                             ),
                           ),
-                          RaisedButton.icon(
+                     _availableMembers.isNotEmpty && _currentInGroups == null ? RaisedButton.icon(
                             color: Theme.of(context).primaryColor,
                             onPressed: () {
                               final isValid = _form.currentState.validate();
@@ -260,6 +260,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                 return;
                               } else {
                                 _handleSmallGroups();
+
                               }
                             },
                             label: Text('Assign small groups',
@@ -268,7 +269,24 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                               Icons.refresh,
                               color: Colors.white,
                             ),
-                          ),
+                          ) 
+: RaisedButton.icon(
+                            color: Theme.of(context).primaryColor,
+                            onPressed: () { 
+                              setState(() {
+                                _currentInGroups = null;
+                              didChangeDependencies();
+                              sizeController.clear();
+                              });
+                        
+                            },
+                            label: Text('Reset',
+                                style: TextStyle(color: Colors.white)),
+                            icon: Icon(
+                              Icons.refresh,
+                              color: Colors.white,
+                            ),
+                          ) 
                         ],
                       ),
                     ),

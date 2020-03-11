@@ -11,7 +11,7 @@ class MemberItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
           child: ListTile(
-        leading: Checkbox(
+        leading:  Checkbox(
             value: member.isAbsent,
             onChanged: (bool checked) {
               Provider.of<MembersGroupsModel>(context, listen: false)
