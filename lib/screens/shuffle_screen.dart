@@ -190,6 +190,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                 ),
                 if (_expanded)
                   Container(
+                    padding: EdgeInsets.all(10),
                     child: Card(
                       child: Column(
                         children: [
@@ -217,42 +218,46 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                             ],
                           ),
                           Form(
+                  
                             key: _form,
-                            autovalidate: true,
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                labelText: 'Set the size of small groups',
-                              ),
-                              textInputAction: TextInputAction.done,
-                              keyboardType: TextInputType.number,
-                              controller: sizeController,
-                              validator: (value) {
-                                if (_radioValue == -1) {
-                                  return 'Please select the mode of operation';
-                                }
-                                if (value.isEmpty) {
-                                  return 'Please enter an integer value ';
-                                }
-                                if (int.tryParse(value) == null) {
-                                  return 'Please enter an integer value';
-                                }
-                                if (int.parse(value) <= 1) {
-                                  return 'Please enter a number greater than 1';
-                                }
-                                if (_radioValue == 0 &&
-                                    int.parse(value) >=
-                                        _availableMembers.length) {
-                                  return 'Please enter a number smaller than ${_availableMembers.length})';
-                                }
-                                if (_radioValue == 1 &&
-                                    int.parse(value) >
-                                        (_availableMembers.length) /
-                                            2.round()) {
-                                  return 'Please enter a number smaller than ${(_availableMembers.length) / 2.floor().toInt()})';
-                                }
+                            
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal:8.0),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Give an integer.',
+                                ),
+                                textInputAction: TextInputAction.done,
+                                keyboardType: TextInputType.number,
+                                controller: sizeController,
+                                validator: (value) {
+                                  if (_radioValue == -1) {
+                                    return 'Please select the mode of operation';
+                                  }
+                                  if (value.isEmpty) {
+                                    return 'Please enter an integer value ';
+                                  }
+                                  if (int.tryParse(value) == null) {
+                                    return 'Please enter an integer value';
+                                  }
+                                  if (int.parse(value) <= 1) {
+                                    return 'Please enter a number greater than 1';
+                                  }
+                                  if (_radioValue == 0 &&
+                                      int.parse(value) >=
+                                          _availableMembers.length) {
+                                    return 'Please enter a number smaller than ${_availableMembers.length})';
+                                  }
+                                  if (_radioValue == 1 &&
+                                      int.parse(value) >
+                                          (_availableMembers.length) /
+                                              2.round()) {
+                                    return 'Please enter a number smaller than ${(_availableMembers.length) / 2.floor().toInt()})';
+                                  }
 
-                                return null;
-                              },
+                                  return null;
+                                },
+                              ),
                             ),
                           ),
                           _availableMembers.isNotEmpty &&

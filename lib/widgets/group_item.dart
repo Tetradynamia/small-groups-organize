@@ -21,7 +21,12 @@ class GroupItem extends StatelessWidget {
     final thisGroupMembers =
         groupData.members.where((member) => member.groupName == name);
     return InkWell(
-      borderRadius: BorderRadius.only(bottomRight: Radius.circular(50)),
+      splashColor: Theme.of(context).primaryColor,
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(6),
+          topRight: Radius.circular(6),
+          bottomLeft: Radius.circular(6),
+          bottomRight: Radius.circular(50)),
       onTap: () {
         Navigator.of(context).pushNamed(TabsScreen.routeName, arguments: name);
       },
@@ -47,20 +52,19 @@ class GroupItem extends StatelessWidget {
           children: <Widget>[
             Text(
               name,
-              style: TextStyle(fontSize: 20),
+              style: TextStyle(fontSize: 20, color: Colors.white),
             ),
             Column(
               children: <Widget>[
                 Text('Members;'),
                 Text(
                   '${thisGroupMembers.length}',
-                  style: TextStyle(
-                    fontSize: 20,
+                  style: TextStyle(fontSize: 20, color: Colors.white
                   ),
                 ),
               ],
             ),
-            Text(description),
+            Text(description, style: TextStyle( color: Colors.white),),
           ],
         ),
       ),
