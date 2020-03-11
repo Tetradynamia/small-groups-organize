@@ -276,7 +276,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                   ),
                                 )
                               : RaisedButton.icon(
-                                  color: Theme.of(context).primaryColor,
+                                  color: Theme.of(context).errorColor,
                                   onPressed: () {
                                     setState(() {
                                       _currentInGroups = null;
