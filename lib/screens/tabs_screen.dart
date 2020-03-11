@@ -19,12 +19,15 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   void initState() {
     _pages = [
-      {"page": GroupScreen(), "title": 'title'},
+      {"page": GroupScreen(), "title": ''},
       {"page": ShuffleScreen(), "title": "Shuffle"},
       {"page": HistoryScreen(), "title": "Shuffle"},
     ];
     super.initState();
   }
+
+ 
+  
 
   void _selectPage(int index) {
     setState(() {
@@ -36,7 +39,7 @@ class _TabsScreenState extends State<TabsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_pages[_selectedPageIndex]["title"]),
+        title: Text('${ModalRoute.of(context).settings.arguments} '),
       ),
       body: _pages[_selectedPageIndex]["page"],
       bottomNavigationBar: BottomNavigationBar(
@@ -60,7 +63,7 @@ class _TabsScreenState extends State<TabsScreen> {
           BottomNavigationBarItem(
             backgroundColor: Theme.of(context).primaryColor,
             icon: Icon(Icons.archive),
-            title: Text("History"),
+            title: Text("Archive"),
           )
         ],
       ),
