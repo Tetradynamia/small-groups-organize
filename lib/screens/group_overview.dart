@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:t3/widgets/drawer.dart';
 
 import '../widgets/groups_grid.dart';
+import '../screens/manage_groups_screen.dart';
 
 class GroupOverview extends StatelessWidget {
   @override
@@ -12,6 +13,12 @@ class GroupOverview extends StatelessWidget {
       ),
       body: GroupsGrid(),
       drawer: MainDrawer(),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context)
+                .pushReplacementNamed(ManageGroupsScreen.routeName);
+          },
+          child: Icon(Icons.edit)),
     );
   }
 }

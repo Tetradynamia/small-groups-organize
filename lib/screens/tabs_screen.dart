@@ -1,24 +1,17 @@
 import 'package:flutter/material.dart';
 
-
 import '../screens/group_screen.dart';
 import '../screens/history_screen.dart';
 import '../screens/shuffle_screen.dart';
 
 class TabsScreen extends StatefulWidget {
-
   static const routeName = '/tabs';
- 
- 
 
-  
   @override
   _TabsScreenState createState() => _TabsScreenState();
 }
 
 class _TabsScreenState extends State<TabsScreen> {
-
-  
   List<Map<String, Object>> _pages;
 
   int _selectedPageIndex = 0;
@@ -71,6 +64,7 @@ class _TabsScreenState extends State<TabsScreen> {
           )
         ],
       ),
+     
     );
   }
 }
