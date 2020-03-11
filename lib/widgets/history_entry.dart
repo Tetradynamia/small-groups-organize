@@ -37,14 +37,23 @@ class _HistoryEntryState extends State<HistoryEntry> {
         if (_expanded)
           Column(children: <Widget>[
             ...widget.entry.subGroups
-                .map((i) => (Card(
-                      color: Colors.red,
+                .map((subGroup) => (Card(
                       child: Column(
-                        children: [
-                          ...i.map(
-                            (k) => (Card(
+                        children: [    Card(
+                          color: Theme.of(context).primaryColor,
+                          child: ListTile(
+                            title: Text(
+                              'In-group ${widget.entry.subGroups.indexOf(subGroup) + 1}:',
+                              style: TextStyle(
+                                fontSize: 16, color: Colors.white
+                              ),
+                            ),
+                          ),
+                        ),
+                          ...subGroup.map(
+                            (member) => (Card(
                               child: ListTile(
-                                title: Text(k.memberName),
+                                title: Text(member.memberName),
                               ),
                             )),
                           ),
@@ -52,10 +61,15 @@ class _HistoryEntryState extends State<HistoryEntry> {
                       ),
                     )))
                 .toList(),
-            IconButton(
-              icon: Icon(Icons.delete),
-              alignment: Alignment.bottomRight,
-              onPressed: () => historyData.removeFromHistory(widget.avain),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.delete, color: Theme.of(context).errorColor,),
+                  alignment: Alignment.topRight,
+                  onPressed: () => historyData.removeFromHistory(widget.avain),
+                ),
+              ],
             )
           ]),
       ]),
