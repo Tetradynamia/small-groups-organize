@@ -89,16 +89,16 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     // get number of groups
     var numberOfGroups = (_availableMembers.length / sizeOfGroups).round();
     print(numberOfGroups);
-    print(numberOfGroups*sizeOfGroups);
+    print(numberOfGroups * sizeOfGroups);
     print(_availableMembers.length);
-    if(numberOfGroups*sizeOfGroups < _availableMembers.length){
+    if (numberOfGroups * sizeOfGroups < _availableMembers.length) {
       numberOfGroups = numberOfGroups + 1;
     }
 
     //divide into groups
 
     for (var i = 0; i <= numberOfGroups; i += 1) {
-      if (_availableMembers.length >= sizeOfGroups -1){ 
+      if (_availableMembers.length >= sizeOfGroups - 1) {
         temp.add(_availableMembers.sublist(
             _availableMembers.length - sizeOfGroups, _availableMembers.length));
         _availableMembers.removeRange(
@@ -136,7 +136,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
       case 0:
         if (sizeController.text.isNotEmpty) {
           _numberOfGroups(int.parse(sizeController.text));
-          
+
           didChangeDependencies();
           sizeController.clear();
         } else {
@@ -147,7 +147,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
       case 1:
         if (sizeController.text.isNotEmpty) {
           _sizeOfGroups(int.parse(sizeController.text));
-          
+
           didChangeDependencies();
           sizeController.clear();
         } else {
@@ -244,7 +244,10 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                         _availableMembers.length) {
                                   return 'Please enter a number smaller than ${_availableMembers.length})';
                                 }
-                                if(_radioValue == 1 && int.parse(value) > (_availableMembers.length) / 2.round()){
+                                if (_radioValue == 1 &&
+                                    int.parse(value) >
+                                        (_availableMembers.length) /
+                                            2.round()) {
                                   return 'Please enter a number smaller than ${(_availableMembers.length) / 2.floor().toInt()})';
                                 }
 
@@ -252,41 +255,42 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                               },
                             ),
                           ),
-                     _availableMembers.isNotEmpty && _currentInGroups == null ? RaisedButton.icon(
-                            color: Theme.of(context).primaryColor,
-                            onPressed: () {
-                              final isValid = _form.currentState.validate();
-                              if (!isValid) {
-                                return;
-                              } else {
-                                _handleSmallGroups();
-
-                              }
-                            },
-                            label: Text('Assign small groups',
-                                style: TextStyle(color: Colors.white)),
-                            icon: Icon(
-                              Icons.refresh,
-                              color: Colors.white,
-                            ),
-                          ) 
-: RaisedButton.icon(
-                            color: Theme.of(context).primaryColor,
-                            onPressed: () { 
-                              setState(() {
-                                _currentInGroups = null;
-                              didChangeDependencies();
-                              sizeController.clear();
-                              });
-                        
-                            },
-                            label: Text('Reset',
-                                style: TextStyle(color: Colors.white)),
-                            icon: Icon(
-                              Icons.refresh,
-                              color: Colors.white,
-                            ),
-                          ) 
+                          _availableMembers.isNotEmpty &&
+                                  _currentInGroups == null
+                              ? RaisedButton.icon(
+                                  color: Theme.of(context).primaryColor,
+                                  onPressed: () {
+                                    final isValid =
+                                        _form.currentState.validate();
+                                    if (!isValid) {
+                                      return;
+                                    } else {
+                                      _handleSmallGroups();
+                                    }
+                                  },
+                                  label: Text('Assign small groups',
+                                      style: TextStyle(color: Colors.white)),
+                                  icon: Icon(
+                                    Icons.refresh,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : RaisedButton.icon(
+                                  color: Theme.of(context).primaryColor,
+                                  onPressed: () {
+                                    setState(() {
+                                      _currentInGroups = null;
+                                      didChangeDependencies();
+                                      sizeController.clear();
+                                    });
+                                  },
+                                  label: Text('Reset',
+                                      style: TextStyle(color: Colors.white)),
+                                  icon: Icon(
+                                    Icons.refresh,
+                                    color: Colors.white,
+                                  ),
+                                )
                         ],
                       ),
                     ),
@@ -328,6 +332,12 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                             .settings
                                             .arguments,
                                         note);
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Text(
+                                    'Added to history!',
+                                  ),
+                                  duration: Duration(seconds: 2),
+                                ));
                               },
                               child: Text('Yes')),
                           FlatButton(
