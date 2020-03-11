@@ -51,7 +51,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
       // var numberOfGroups = 4;
       // Get size of groups
       var groupSize = (_availableMembers.length / numberOfGroups).round();
-      if(groupSize*numberOfGroups > _availableMembers.length){
+      if (groupSize * numberOfGroups > _availableMembers.length) {
         groupSize = groupSize - 1;
       }
 // divide into groups
@@ -88,11 +88,17 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     List<List<GroupMember>> temp = [];
     // get number of groups
     var numberOfGroups = (_availableMembers.length / sizeOfGroups).round();
+    print(numberOfGroups);
+    print(numberOfGroups*sizeOfGroups);
+    print(_availableMembers.length);
+    if(numberOfGroups*sizeOfGroups < _availableMembers.length){
+      numberOfGroups = numberOfGroups + 1;
+    }
 
     //divide into groups
 
-    for (var i = 0; i < numberOfGroups; i += 1) {
-      if (_availableMembers.length >= sizeOfGroups) {
+    for (var i = 0; i <= numberOfGroups; i += 1) {
+      if (_availableMembers.length >= sizeOfGroups -1){ 
         temp.add(_availableMembers.sublist(
             _availableMembers.length - sizeOfGroups, _availableMembers.length));
         _availableMembers.removeRange(
@@ -101,9 +107,15 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     }
 // handle the rest
 
-    if (sizeOfGroups > 2 && _availableMembers.length == sizeOfGroups - 1) {
-      temp.add(_availableMembers);
+    if (sizeOfGroups > 2 && _availableMembers.length == 1) {
+      for (var i = 0; i < _availableMembers.length; i++) {
+        temp[i].add(_availableMembers[i]);
+      }
     }
+
+    // if (sizeOfGroups > 2 && _availableMembers.length == sizeOfGroups - 1) {
+    //   numberOfGroups = numberOfGroups + 1;
+    // }
     question = temp;
     setState(() {
       // call set state to update the view
@@ -124,8 +136,9 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
       case 0:
         if (sizeController.text.isNotEmpty) {
           _numberOfGroups(int.parse(sizeController.text));
-          sizeController.clear();
+          
           didChangeDependencies();
+          sizeController.clear();
         } else {
           print('shit');
           return;
@@ -134,8 +147,9 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
       case 1:
         if (sizeController.text.isNotEmpty) {
           _sizeOfGroups(int.parse(sizeController.text));
-          sizeController.clear();
+          
           didChangeDependencies();
+          sizeController.clear();
         } else {
           print('shit');
           return;
@@ -229,6 +243,9 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                     int.parse(value) >=
                                         _availableMembers.length) {
                                   return 'Please enter a number smaller than ${_availableMembers.length})';
+                                }
+                                if(_radioValue == 1 && int.parse(value) > (_availableMembers.length) / 2.round()){
+                                  return 'Please enter a number smaller than ${(_availableMembers.length) / 2.floor().toInt()})';
                                 }
 
                                 return null;
