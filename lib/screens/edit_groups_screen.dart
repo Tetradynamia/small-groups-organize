@@ -124,7 +124,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
                 ),
                 onPressed: _saveForm),
             FlatButton(
-                child: Text('Cancel'),
+                child: Text('Cance'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 })
