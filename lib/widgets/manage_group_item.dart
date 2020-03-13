@@ -19,15 +19,15 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
 
   @override
   Widget build(BuildContext context) {
-    final groupData = Provider.of<MembersGroupsModel>(context)
-        .members
-        .where((member) => member.groupName == widget.group.groupName)
-        .toList();
+    // final groupData = Provider.of<MembersGroupsModel>(context)
+    //     .members
+    //     .where((member) => member.groupName == widget.group.groupName)
+    //     .toList();
     return Column(
       children: <Widget>[
         Card(
           child: ListTile(
-            leading: CircleAvatar(child: Text('${groupData.length}')),
+            leading: CircleAvatar(child: Text('${widget.group.groupMembers.length}')),
             title: Text('${widget.group.groupName}'),
             subtitle: Text(widget.group.groupDescription),
             trailing: Container(
@@ -37,7 +37,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                   IconButton(
                     icon:
                         Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-                    onPressed: groupData.length > 0
+                    onPressed: widget.group.groupMembers.length > 0
                         ? () {
                             setState(
                               () {
@@ -54,7 +54,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             title: Text('Add member'),
-                            content: EditMembers(null ,widget.group.groupName),
+                            content: EditMembers(null ,widget.group.groupId),
                           ),
                         );
                       }),
@@ -121,7 +121,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                 itemBuilder: (ctx, index) => Card(
                   child: ListTile(
                     dense: true,
-                    title: Text(groupData[index].memberName),
+                    title: Text(widget.group.groupMembers[index].memberName),
                     trailing: Container(
                       width: 150,
                       child: Row(mainAxisAlignment: MainAxisAlignment.end,
@@ -131,7 +131,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             title: Text('Edit member'),
-                            content: EditMembers(groupData[index].memberId, widget.group.groupName),
+                            content: EditMembers(widget.group.groupMembers[index].memberId, widget.group.groupId),
                           ),
                         );
                           }),
@@ -143,13 +143,13 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                             builder: (ctx) => AlertDialog(
                                   title: Text('Confirm remove'),
                                   content: Text(
-                                      'Are you sure you want to remove ${groupData[index].memberName}?'),
+                                      'Are you sure you want to remove ${widget.group.groupMembers[index].memberName}?'),
                                   actions: <Widget>[
                                     FlatButton(
                                       onPressed: () {
                                         Provider.of<MembersGroupsModel>(context,
                                                 listen: false)
-                                            .removeMember(groupData[index].memberId);
+                                            .removeMember(widget.group.groupId, widget.group.groupMembers[index].memberId);
                                         Navigator.of(context).pop();
                                       },
                                       child: Row(
@@ -175,7 +175,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                     ),
                   ),
                 ),
-                itemCount: groupData.length,
+                itemCount: widget.group.groupMembers.length,
               ),
             ),
           ),

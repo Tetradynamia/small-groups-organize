@@ -4,9 +4,10 @@ import 'package:t3/models/group_member.dart';
 import '../models/members_groups_model.dart';
 
 class MemberItem extends StatelessWidget {
+  final String id;
   final GroupMember member;
 
-  MemberItem({@required this.member});
+  MemberItem({this.id, @required this.member});
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -15,7 +16,7 @@ class MemberItem extends StatelessWidget {
             value: member.isAbsent,
             onChanged: (bool checked) {
               Provider.of<MembersGroupsModel>(context, listen: false)
-                  .toggleAbsent(member);
+                  .toggleAbsent(id, member);
               if (member.isAbsent) {
                 Scaffold.of(context).hideCurrentSnackBar();
                 Scaffold.of(context).showSnackBar(SnackBar(

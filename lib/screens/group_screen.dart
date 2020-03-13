@@ -7,13 +7,14 @@ import '../models/members_groups_model.dart';
 class GroupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final gName = ModalRoute.of(context).settings.arguments;
-    final memberData = Provider.of<MembersGroupsModel>(context);
-    final thisGroupMembers = memberData.members
-        .where((member) => member.groupName == gName)
-        .toList();
-    final thisGroupAvailableMembers = memberData.availableMembers
-        .where((member) => member.groupName == gName)
+    final id = ModalRoute.of(context).settings.arguments;
+
+    final thisGroup = Provider.of<MembersGroupsModel>(context)
+        .groups
+        .firstWhere((group) => group.groupId == id);
+    var thisGroupMembers = thisGroup.groupMembers.toList();
+    var thisGroupAvailableMembers = thisGroup.groupMembers
+        .where((member) => member.isAbsent == false)
         .toList();
 
     return Padding(
@@ -24,10 +25,12 @@ class GroupScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
               Card(
-                              child: ListTile(
-                    title: Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: ListTile(
+                    title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('${thisGroupAvailableMembers.length} / ${thisGroupMembers.length} members present'),
+                    Text(
+                        '${thisGroupAvailableMembers.length} / ${thisGroupMembers.length} members present'),
                   ],
                 )),
               ),
@@ -45,8 +48,8 @@ class GroupScreen extends StatelessWidget {
               itemCount: thisGroupMembers.length,
               itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
                 value: thisGroupMembers[index],
-                child: MemberItem(
-                  member: thisGroupMembers[index],
+                child: MemberItem( id:
+                 id, member: thisGroupMembers[index],
                 ),
               ),
             ),

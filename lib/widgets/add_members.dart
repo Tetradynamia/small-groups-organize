@@ -5,11 +5,10 @@ import 'package:t3/models/group_member.dart';
 import '../models/members_groups_model.dart';
 
 class EditMembers extends StatefulWidget {
-
   final String memberId;
-  final String groupName;
+  final String groupId;
 
-  EditMembers(this.memberId, this.groupName);
+  EditMembers(this.memberId, this.groupId);
   @override
   _EditMembersState createState() => _EditMembersState();
 }
@@ -31,7 +30,10 @@ class _EditMembersState extends State<EditMembers> {
     if (_isInit) {
       if (widget.memberId != null) {
         _editedMember = Provider.of<MembersGroupsModel>(context, listen: false)
-            .findMemberById(widget.memberId);
+            .groups
+            .firstWhere((group) => group.groupId == widget.groupId)
+            .groupMembers
+            .firstWhere((member) => member.memberId == widget.memberId);
 
         _initValues = {
           'name': _editedMember.memberName,
@@ -54,13 +56,14 @@ class _EditMembersState extends State<EditMembers> {
       return;
     }
     _form.currentState.save();
-    if (widget.memberId != null){
-    Provider.of<MembersGroupsModel>(context, listen: false)
-        .updateMember(_editedMember.memberId ,_editedMember);
+    if (widget.memberId != null) {
+      Provider.of<MembersGroupsModel>(context, listen: false)
+          .updateMember(widget.groupId, _editedMember.memberId, _editedMember);
+    } else {
+      Provider.of<MembersGroupsModel>(context, listen: false)
+          .addMember(widget.groupId, _editedMember);
+      print(widget.groupId);
     }
-else{
-    Provider.of<MembersGroupsModel>(context, listen: false)
-        .addMember(_editedMember);}
 
     Navigator.of(context).pop();
   }
@@ -76,7 +79,9 @@ else{
             initialValue: _initValues['name'],
             decoration: InputDecoration(labelText: 'Name:'),
             textInputAction: TextInputAction.done,
-            onFieldSubmitted: (_) {Navigator.of(context).pop();},
+            onFieldSubmitted: (_) {
+              Navigator.of(context).pop();
+            },
             validator: (value) {
               if (value.isEmpty) {
                 return 'Please provide a valid name';
@@ -87,7 +92,7 @@ else{
               _editedMember = GroupMember(
                   memberId: _editedMember.memberId,
                   memberName: value,
-                  groupName: widget.groupName);
+                  groupName: '');
             },
           ),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
