@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 
 import '../screens/tabs_screen.dart';
-import '../models/members_groups_model.dart';
+// import '../models/members_groups_model.dart';
 
 class GroupItem extends StatelessWidget {
   final String id;
   final String name;
   final String description;
+  final List members;
 
   GroupItem(
     this.id,
     this.name,
     this.description,
+    this.members,
   );
 
   @override
   Widget build(BuildContext context) {
-    final groupData = Provider.of<MembersGroupsModel>(context);
-    final thisGroupMembers =
-        groupData.members.where((member) => member.groupName == name);
+  
     return InkWell(
       splashColor: Theme.of(context).primaryColor,
       borderRadius: BorderRadius.only(
@@ -28,7 +28,7 @@ class GroupItem extends StatelessWidget {
           bottomLeft: Radius.circular(6),
           bottomRight: Radius.circular(50)),
       onTap: () {
-        Navigator.of(context).pushNamed(TabsScreen.routeName, arguments: name);
+        Navigator.of(context).pushNamed(TabsScreen.routeName, arguments: id);
       },
       child: Container(
         height: 150,
@@ -58,7 +58,7 @@ class GroupItem extends StatelessWidget {
               children: <Widget>[
                 Text('Members;'),
                 Text(
-                  '${thisGroupMembers.length}',
+                  '${members.length}',
                   style: TextStyle(fontSize: 20, color: Colors.white
                   ),
                 ),

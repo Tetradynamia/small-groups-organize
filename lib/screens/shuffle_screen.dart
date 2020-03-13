@@ -26,10 +26,13 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final gName = ModalRoute.of(context).settings.arguments;
-    final memberData = Provider.of<MembersGroupsModel>(context, listen: false);
-    _availableMembers = memberData.availableMembers
-        .where((member) => member.groupName == gName)
+    final id = ModalRoute.of(context).settings.arguments;
+
+    final thisGroup = Provider.of<MembersGroupsModel>(context, listen: false)
+        .groups
+        .firstWhere((group) => group.groupId == id);
+    _availableMembers = thisGroup.groupMembers
+        .where((member) => member.isAbsent == false)
         .toList();
   }
 
@@ -218,11 +221,10 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                             ],
                           ),
                           Form(
-                  
                             key: _form,
-                            
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal:8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
                               child: TextFormField(
                                 decoration: InputDecoration(
                                   labelText: 'Give an integer.',

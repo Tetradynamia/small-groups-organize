@@ -26,7 +26,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
     'description': '',
   };
   var _isInit = true;
-  String _oldName;
+  
 
   @override
   void didChangeDependencies() {
@@ -39,7 +39,6 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
           'name': _editedGroup.groupName,
           'description': _editedGroup.groupDescription,
         };
-        _oldName = _editedGroup.groupName;
       }
     }
     
@@ -62,12 +61,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
     if (_editedGroup.groupId != null) {
       Provider.of<MembersGroupsModel>(context, listen: false)
           .updateGroup(_editedGroup.groupId, _editedGroup);
-      if (_editedGroup.groupName != _oldName) {
-        Provider.of<MembersGroupsModel>(context, listen: false)
-            .members
-            .where((member) => member.groupName == _oldName)
-            .forEach((member) => member.groupName = _editedGroup.groupName);
-      }
+      
     } else {
       Provider.of<MembersGroupsModel>(context, listen: false)
           .addGroup(_editedGroup);
@@ -124,7 +118,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
                 ),
                 onPressed: _saveForm),
             FlatButton(
-                child: Text('Cancel'),
+                child: Text('Cance'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 })
