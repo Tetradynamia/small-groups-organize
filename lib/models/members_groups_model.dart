@@ -20,7 +20,7 @@ class MembersGroupsModel with ChangeNotifier {
     GroupMember(
         memberId: 'm1', memberName: 'Pentti Ananas', groupName: 'Kusipäät'),
     GroupMember(
-        memberId: 'm2', memberName: 'Pentti Urhola', groupName: 'Kusipäät'),
+        memberId: 'm21', memberName: 'Pentti Urhola', groupName: 'Kusipäät'),
     GroupMember(memberId: 'm2', memberName: '1', groupName: 'Kusipäät'),
     GroupMember(memberId: 'm3', memberName: '2', groupName: 'Kusipäät'),
     GroupMember(memberId: 'm4', memberName: '3', groupName: 'Kusipäät'),
