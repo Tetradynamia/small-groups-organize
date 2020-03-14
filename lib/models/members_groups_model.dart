@@ -111,13 +111,31 @@ class MembersGroupsModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void addMember(GroupMember member) {
-    final newMember = GroupMember(
-        memberId: DateTime.now().toString(),
-        memberName: member.memberName,
-        groupName: member.groupName);
-    _members.insert(0, newMember);
-    notifyListeners();
+  Future<void> addMember(GroupMember member) async {
+    const url = 'https://flutter-project-4ed4f.firebaseio.com/members.json';
+
+    try {
+      final response = await http.post(
+        url,
+        body: jsonEncode(
+          {
+            'memberName': member.memberName,
+            'groupName': member.groupName,
+            'isAbesent': member.isAbsent,
+          },
+        ),
+      );
+
+      final newMember = GroupMember(
+          memberId: json.decode(response.body)['name'],
+          memberName: member.memberName,
+          groupName: member.groupName,
+          isAbsent: member.isAbsent);
+      _members.insert(0, newMember);
+      notifyListeners();
+    } catch (error) {
+      throw error;
+    }
   }
 
   void updateMember(String id, GroupMember updatedMember) {
