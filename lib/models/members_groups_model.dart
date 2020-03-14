@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/group_member.dart';
 import '../models/groups.dart';
@@ -56,13 +59,31 @@ class MembersGroupsModel with ChangeNotifier {
     return _members.firstWhere((member) => member.memberId == id);
   }
 
-  void addGroup(Group group) {
-    final newGroup = Group(
-        groupId: DateTime.now().toString(),
+  Future<void> addGroup(Group group) async {
+    const url = 'https://flutter-project-4ed4f.firebaseio.com/groups.json';
+
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode(
+          {
+            'groupName': group.groupName,
+            'groupDescription': group.groupDescription,
+          },
+        ),
+      );
+
+      final newGroup = Group(
+        groupId: json.decode(response.body)['name'],
         groupName: group.groupName,
-        groupDescription: group.groupDescription);
-    _groups.add(newGroup);
-    notifyListeners();
+        groupDescription: group.groupDescription,
+      );
+      _groups.add(newGroup);
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw error;
+    }
   }
 
   void updateGroup(String id, Group updatedGroup) {
@@ -109,32 +130,7 @@ class MembersGroupsModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeMember (String id) {
-    
+  void removeMember(String id) {
     _members.removeWhere((member) => member.memberId == id);
-  }
-
-  List mebersShuffle() {
-    List<GroupMember> shuff = _members;
-    shuff.shuffle();
-    List f = [];
-    var numberOfGroups = 4;
-    var groupSize = (shuff.length / numberOfGroups).round();
-
-    for (var i = 0; i < numberOfGroups; i += 1) {
-      if (shuff.length >= groupSize) {
-        f.add(shuff.sublist(shuff.length - groupSize, shuff.length));
-        shuff.removeRange(shuff.length - groupSize, shuff.length);
-      }
-    }
-
-    if (shuff.length > 0) {
-      for (var i = 0; i < shuff.length; i++) {
-        f[i].add(shuff[i]);
-      }
-    }
-
-    notifyListeners();
-    return f;
   }
 }
