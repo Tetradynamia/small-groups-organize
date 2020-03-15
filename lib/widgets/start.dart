@@ -7,6 +7,7 @@ class Start extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(
             'You have not added any groups yet! Tap the button below to add some!', textAlign: TextAlign.center,
