@@ -9,31 +9,31 @@ import '../models/groups.dart';
 
 class MembersGroupsModel with ChangeNotifier {
   List<Group> _groups = [
-    Group(
-      groupId: 'g1',
-      groupName: 'Kusipäät',
-      groupDescription: 'desc',
-    ),
-    Group(
-      groupId: 'g2',
-      groupName: 'Mustikat',
-      groupDescription: 'desc',
-    ),
+    // Group(
+    //   groupId: 'g1',
+    //   groupName: 'Kusipäät',
+    //   groupDescription: 'desc',
+    // ),
+    // Group(
+    //   groupId: 'g2',
+    //   groupName: 'Mustikat',
+    //   groupDescription: 'desc',
+    // ),
   ];
   List<GroupMember> _members = [
-    GroupMember(
-        memberId: 'm1', memberName: 'Pentti Ananas', groupName: 'Kusipäät'),
-    GroupMember(
-        memberId: 'm21', memberName: 'Pentti Urhola', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm2', memberName: '1', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm3', memberName: '2', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm4', memberName: '3', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm5', memberName: '4', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm6', memberName: '5', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm7', memberName: '6', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm8', memberName: '7', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm9', memberName: '8', groupName: 'Mustikat'),
-    GroupMember(memberId: 'm10', memberName: '9', groupName: 'Mustikat'),
+    // GroupMember(
+    //     memberId: 'm1', memberName: 'Pentti Ananas', groupName: 'Kusipäät'),
+    // GroupMember(
+    //     memberId: 'm21', memberName: 'Pentti Urhola', groupName: 'Kusipäät'),
+    // GroupMember(memberId: 'm2', memberName: '1', groupName: 'Kusipäät'),
+    // GroupMember(memberId: 'm3', memberName: '2', groupName: 'Kusipäät'),
+    // GroupMember(memberId: 'm4', memberName: '3', groupName: 'Kusipäät'),
+    // GroupMember(memberId: 'm5', memberName: '4', groupName: 'Kusipäät'),
+    // GroupMember(memberId: 'm6', memberName: '5', groupName: 'Kusipäät'),
+    // GroupMember(memberId: 'm7', memberName: '6', groupName: 'Kusipäät'),
+    // GroupMember(memberId: 'm8', memberName: '7', groupName: 'Kusipäät'),
+    // GroupMember(memberId: 'm9', memberName: '8', groupName: 'Mustikat'),
+    // GroupMember(memberId: 'm10', memberName: '9', groupName: 'Mustikat'),
   ];
 
   List<Group> get groups {
@@ -68,8 +68,20 @@ class MembersGroupsModel with ChangeNotifier {
 
     try {
       final groupsResponse = await http.get(groupsUrl);
+      final membersResponse = await http.get(membersUrl);
+
       final extratctedGroupsData =
           jsonDecode(groupsResponse.body) as Map<String, dynamic>;
+      final extractedMembersData =
+          jsonDecode(membersResponse.body) as Map<String, dynamic>;
+
+      if (extractedMembersData == null || extratctedGroupsData == null) {
+        _groups = [];
+        _members = [];
+        notifyListeners();
+        return;
+      }
+
       final List<Group> loadedGroups = [];
       extratctedGroupsData.forEach((groupId, groupData) {
         loadedGroups.add(Group(
@@ -79,24 +91,21 @@ class MembersGroupsModel with ChangeNotifier {
         ));
       });
 
-      final membersResponse = await http.get(membersUrl);
-      final extractedMembersData =
-          jsonDecode(membersResponse.body) as Map<String, dynamic>;
+      // final membersResponse = await http.get(membersUrl);
+      // final extractedMembersData =
+      //     jsonDecode(membersResponse.body) as Map<String, dynamic>;
       final List<GroupMember> loadedMembers = [];
-      if (extractedMembersData != null) {
-        extractedMembersData.forEach((memberId, memberData) {
-          loadedMembers.add(GroupMember(
-              memberId: memberId,
-              memberName: memberData['memberName'],
-              groupName: memberData['groupName'],
-              isAbsent: memberData['isAbsent']));
-        });
-        _groups = loadedGroups;
-        _members = loadedMembers;
-        notifyListeners();
-      } else {
-        return;
-      }
+
+      extractedMembersData.forEach((memberId, memberData) {
+        loadedMembers.add(GroupMember(
+            memberId: memberId,
+            memberName: memberData['memberName'],
+            groupName: memberData['groupName'],
+            isAbsent: memberData['isAbsent']));
+      });
+      _groups = loadedGroups;
+      _members = loadedMembers;
+      notifyListeners();
     } catch (error) {
       print(error);
       throw error;
@@ -165,18 +174,18 @@ class MembersGroupsModel with ChangeNotifier {
     List<GroupMember> groupMembers = [];
     groupMembers.addAll(_members.where((member) => member.groupName == name));
     _groups.removeAt(groupIndex);
- 
 
     final response = await http.delete(url);
     if (response.statusCode >= 400) {
       _groups.insert(groupIndex, existingGroup);
       notifyListeners();
       throw HttpException('Could not delete group!');
-    } else{
-         groupMembers.forEach((member) {
-      removeMember(member.memberId);
-    });
-    }
+    } else if (groupMembers.isNotEmpty) {
+      groupMembers.forEach((member) {
+        removeMember(member.memberId);
+      });
+    } else { notifyListeners();
+      return;}
 
     // _members.removeWhere((member) => member.groupName == name);
     // notifyListeners();
