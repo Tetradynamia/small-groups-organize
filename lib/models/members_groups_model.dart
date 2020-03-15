@@ -7,7 +7,7 @@ import '../models/group_member.dart';
 import '../models/groups.dart';
 
 class MembersGroupsModel with ChangeNotifier {
-  final List<Group> _groups = [
+   List<Group> _groups = [
     Group(
       groupId: 'g1',
       groupName: 'Kusipäät',
@@ -19,7 +19,7 @@ class MembersGroupsModel with ChangeNotifier {
       groupDescription: 'desc',
     ),
   ];
-  final List<GroupMember> _members = [
+   List<GroupMember> _members = [
     GroupMember(
         memberId: 'm1', memberName: 'Pentti Ananas', groupName: 'Kusipäät'),
     GroupMember(
@@ -59,6 +59,46 @@ class MembersGroupsModel with ChangeNotifier {
     return _members.firstWhere((member) => member.memberId == id);
   }
 
+  Future<void> fetchAndSetGroupsMembers() async {
+    const groupsUrl =
+        'https://flutter-project-4ed4f.firebaseio.com/groups.json';
+    const membersUrl =
+        'https://flutter-project-4ed4f.firebaseio.com/members.json';
+
+    try {
+      final groupsResponse = await http.get(groupsUrl);
+      final extratctedGroupsData =
+          jsonDecode(groupsResponse.body) as Map<String, dynamic>;
+      final List<Group> loadedGroups = [];
+      extratctedGroupsData.forEach((groupId, groupData) {
+        loadedGroups.add(Group(
+          groupId: groupId,
+          groupName: groupData['groupName'],
+          groupDescription: groupData['groupDescription'],
+        ));
+      });
+
+      final membersResponse = await http.get(membersUrl);
+      final extractedMembersData =
+          jsonDecode(membersResponse.body) as Map<String, dynamic>;
+      final List<GroupMember> loadedMembers = [];
+      if(extractedMembersData !=null){
+      extractedMembersData.forEach((memberId, memberData) {
+        loadedMembers.add(GroupMember(
+            memberId: memberId,
+            memberName: memberData['memberName'],
+            groupName: memberData['groupName'],
+            isAbsent: memberData['isAbsent']));
+      });
+      _groups = loadedGroups;
+      _members = loadedMembers;
+      notifyListeners();} else {return;}
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+
   Future<void> addGroup(Group group) async {
     const url = 'https://flutter-project-4ed4f.firebaseio.com/groups.json';
 
@@ -86,21 +126,25 @@ class MembersGroupsModel with ChangeNotifier {
     }
   }
 
- Future <void> updateGroup(String id, Group updatedGroup) async {
+  Future<void> updateGroup(String id, Group updatedGroup) async {
     final groupIndex = _groups.indexWhere((group) => group.groupId == id);
 
-    
     if (groupIndex >= 0) {
-      final url = 'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json';
-      try{
-     await http.patch(url, body:json.encode(
-          {
-            'groupName': updatedGroup.groupName,
-            'groupDescription': updatedGroup.groupDescription,
-          },
-        ),);
-      _groups[groupIndex] = updatedGroup;
-      notifyListeners();} catch (error) {
+      final url =
+          'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json';
+      try {
+        await http.patch(
+          url,
+          body: json.encode(
+            {
+              'groupName': updatedGroup.groupName,
+              'groupDescription': updatedGroup.groupDescription,
+            },
+          ),
+        );
+        _groups[groupIndex] = updatedGroup;
+        notifyListeners();
+      } catch (error) {
         throw error;
       }
     } else {
@@ -134,7 +178,7 @@ class MembersGroupsModel with ChangeNotifier {
           {
             'memberName': member.memberName,
             'groupName': member.groupName,
-            'isAbesent': member.isAbsent,
+            'isAbsent': member.isAbsent,
           },
         ),
       );
@@ -143,7 +187,7 @@ class MembersGroupsModel with ChangeNotifier {
           memberId: json.decode(response.body)['name'],
           memberName: member.memberName,
           groupName: member.groupName,
-          isAbsent: member.isAbsent);
+          isAbsent: false);
       _members.insert(0, newMember);
       notifyListeners();
     } catch (error) {
@@ -151,20 +195,25 @@ class MembersGroupsModel with ChangeNotifier {
     }
   }
 
-  Future <void> updateMember(String id, GroupMember updatedMember) async {
+  Future<void> updateMember(String id, GroupMember updatedMember) async {
     final groupIndex = _members.indexWhere((member) => member.memberId == id);
     if (groupIndex >= 0) {
-      final url = 'https://flutter-project-4ed4f.firebaseio.com/members/$id.json';
+      final url =
+          'https://flutter-project-4ed4f.firebaseio.com/members/$id.json';
       try {
-      await http.patch(url, body: jsonEncode(
-          {
-            'memberName': updatedMember.memberName,
-            'groupName': updatedMember.groupName,
-            
-          },
-        ), );
-      _members[groupIndex] = updatedMember;
-      notifyListeners(); } catch (error){
+        await http.patch(
+          url,
+          body: jsonEncode(
+            {
+              'memberName': updatedMember.memberName,
+              'groupName': updatedMember.groupName,
+              
+            },
+          ),
+        );
+        _members[groupIndex] = updatedMember;
+        notifyListeners();
+      } catch (error) {
         print(error);
         throw error;
       }

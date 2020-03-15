@@ -7,7 +7,21 @@ import '../widgets/groups_grid.dart';
 import '../screens/manage_groups_screen.dart';
 import '../models/members_groups_model.dart';
 
-class GroupOverview extends StatelessWidget {
+class GroupOverview extends StatefulWidget {
+  @override
+  _GroupOverviewState createState() => _GroupOverviewState();
+}
+
+class _GroupOverviewState extends State<GroupOverview> {
+ 
+
+@override
+  void initState() {
+    
+   Provider.of<MembersGroupsModel>(context, listen: false).fetchAndSetGroupsMembers();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
    final groupData = Provider.of<MembersGroupsModel>(context);
