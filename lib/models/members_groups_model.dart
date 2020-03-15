@@ -157,13 +157,29 @@ class MembersGroupsModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteGroup(String id) {
+  Future<void> deleteGroup(String id) async {
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json';
     var groupIndex = _groups.indexWhere((group) => group.groupId == id);
+    var existingGroup = _groups[groupIndex];
     var name = _groups[groupIndex].groupName;
-    _groups.removeWhere((group) => group.groupId == id);
+    List<GroupMember> groupMembers = [];
+    groupMembers.addAll(_members.where((member) => member.groupName == name));
+    _groups.removeAt(groupIndex);
+ 
 
-    _members.removeWhere((member) => member.groupName == name);
-    notifyListeners();
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      _groups.insert(groupIndex, existingGroup);
+      notifyListeners();
+      throw HttpException('Could not delete group!');
+    } else{
+         groupMembers.forEach((member) {
+      removeMember(member.memberId);
+    });
+    }
+
+    // _members.removeWhere((member) => member.groupName == name);
+    // notifyListeners();
   }
 
   void toggleAbsent(GroupMember member) {
@@ -226,7 +242,7 @@ class MembersGroupsModel with ChangeNotifier {
     notifyListeners();
   }
 
- Future <void> removeMember(String id) async {
+  Future<void> removeMember(String id) async {
     final url = 'https://flutter-project-4ed4f.firebaseio.com/members/$id.json';
     final existingMemberIndex =
         _members.indexWhere((member) => member.memberId == id);
@@ -234,16 +250,12 @@ class MembersGroupsModel with ChangeNotifier {
     _members.removeAt(existingMemberIndex);
     notifyListeners();
 
- final response = await http.delete(url);
-    if (response.statusCode >= 400){
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
       _members.insert(existingMemberIndex, existingMember);
       notifyListeners();
       throw HttpException('Could not delete member!');
     }
-      existingMember = null;
-    
-      
-    }
-    
-  
+    existingMember = null;
+  }
 }
