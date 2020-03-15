@@ -2,12 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:t3/models/http_exception.dart';
 
 import '../models/group_member.dart';
 import '../models/groups.dart';
 
 class MembersGroupsModel with ChangeNotifier {
-   List<Group> _groups = [
+  List<Group> _groups = [
     Group(
       groupId: 'g1',
       groupName: 'Kusipäät',
@@ -19,7 +20,7 @@ class MembersGroupsModel with ChangeNotifier {
       groupDescription: 'desc',
     ),
   ];
-   List<GroupMember> _members = [
+  List<GroupMember> _members = [
     GroupMember(
         memberId: 'm1', memberName: 'Pentti Ananas', groupName: 'Kusipäät'),
     GroupMember(
@@ -82,17 +83,20 @@ class MembersGroupsModel with ChangeNotifier {
       final extractedMembersData =
           jsonDecode(membersResponse.body) as Map<String, dynamic>;
       final List<GroupMember> loadedMembers = [];
-      if(extractedMembersData !=null){
-      extractedMembersData.forEach((memberId, memberData) {
-        loadedMembers.add(GroupMember(
-            memberId: memberId,
-            memberName: memberData['memberName'],
-            groupName: memberData['groupName'],
-            isAbsent: memberData['isAbsent']));
-      });
-      _groups = loadedGroups;
-      _members = loadedMembers;
-      notifyListeners();} else {return;}
+      if (extractedMembersData != null) {
+        extractedMembersData.forEach((memberId, memberData) {
+          loadedMembers.add(GroupMember(
+              memberId: memberId,
+              memberName: memberData['memberName'],
+              groupName: memberData['groupName'],
+              isAbsent: memberData['isAbsent']));
+        });
+        _groups = loadedGroups;
+        _members = loadedMembers;
+        notifyListeners();
+      } else {
+        return;
+      }
     } catch (error) {
       print(error);
       throw error;
@@ -207,7 +211,6 @@ class MembersGroupsModel with ChangeNotifier {
             {
               'memberName': updatedMember.memberName,
               'groupName': updatedMember.groupName,
-              
             },
           ),
         );
@@ -223,7 +226,24 @@ class MembersGroupsModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeMember(String id) {
-    _members.removeWhere((member) => member.memberId == id);
-  }
+ Future <void> removeMember(String id) async {
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/members/$id.json';
+    final existingMemberIndex =
+        _members.indexWhere((member) => member.memberId == id);
+    var existingMember = _members[existingMemberIndex];
+    _members.removeAt(existingMemberIndex);
+    notifyListeners();
+
+ final response = await http.delete(url);
+    if (response.statusCode >= 400){
+      _members.insert(existingMemberIndex, existingMember);
+      notifyListeners();
+      throw HttpException('Could not delete member!');
+    }
+      existingMember = null;
+    
+      
+    }
+    
+  
 }
