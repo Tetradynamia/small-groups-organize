@@ -86,10 +86,23 @@ class MembersGroupsModel with ChangeNotifier {
     }
   }
 
-  void updateGroup(String id, Group updatedGroup) {
+ Future <void> updateGroup(String id, Group updatedGroup) async {
     final groupIndex = _groups.indexWhere((group) => group.groupId == id);
+
+    
     if (groupIndex >= 0) {
+      final url = 'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json';
+      try{
+     await http.patch(url, body:json.encode(
+          {
+            'groupName': updatedGroup.groupName,
+            'groupDescription': updatedGroup.groupDescription,
+          },
+        ),);
       _groups[groupIndex] = updatedGroup;
+      notifyListeners();} catch (error) {
+        throw error;
+      }
     } else {
       print('...');
     }
@@ -138,10 +151,23 @@ class MembersGroupsModel with ChangeNotifier {
     }
   }
 
-  void updateMember(String id, GroupMember updatedMember) {
+  Future <void> updateMember(String id, GroupMember updatedMember) async {
     final groupIndex = _members.indexWhere((member) => member.memberId == id);
     if (groupIndex >= 0) {
+      final url = 'https://flutter-project-4ed4f.firebaseio.com/members/$id.json';
+      try {
+      await http.patch(url, body: jsonEncode(
+          {
+            'memberName': updatedMember.memberName,
+            'groupName': updatedMember.groupName,
+            
+          },
+        ), );
       _members[groupIndex] = updatedMember;
+      notifyListeners(); } catch (error){
+        print(error);
+        throw error;
+      }
     } else {
       print('...');
     }

@@ -59,12 +59,9 @@ class _EditMembersState extends State<EditMembers> {
       _isLoading = true;
     });
     if (widget.memberId != null) {
-      Provider.of<MembersGroupsModel>(context, listen: false)
+     await Provider.of<MembersGroupsModel>(context, listen: false)
           .updateMember(_editedMember.memberId, _editedMember);
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context).pop();
+     
     } else {
       try {
         await Provider.of<MembersGroupsModel>(context, listen: false)
@@ -84,14 +81,12 @@ class _EditMembersState extends State<EditMembers> {
             ],
           ),
         );
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
-        Navigator.of(context).pop();
-      }
+      } 
     }
-    // Navigator.of(context).pop();
+     setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pop();
   }
 
   @override
