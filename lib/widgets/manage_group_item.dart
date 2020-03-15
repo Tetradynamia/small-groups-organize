@@ -83,10 +83,21 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                       'Are you sure you want to delete ${widget.group.groupName} and all its members?'),
                                   actions: <Widget>[
                                     FlatButton(
-                                      onPressed: () {
-                                        Provider.of<MembersGroupsModel>(context,
-                                                listen: false)
-                                            .deleteGroup(widget.group.groupId);
+                                      onPressed: () async {
+                                        try {
+                                          await Provider.of<MembersGroupsModel>(
+                                                  context,
+                                                  listen: false)
+                                              .deleteGroup(
+                                                  widget.group.groupId);
+                                          
+                                        } catch (error) {
+                                          Scaffold.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Deleting failed!'),
+                                            ),
+                                          );
+                                        }
                                         Navigator.of(context).pop();
                                       },
                                       child: Row(
