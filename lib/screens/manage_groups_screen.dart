@@ -9,6 +9,10 @@ import '../screens/edit_groups_screen.dart';
 class ManageGroupsScreen extends StatelessWidget {
   static const routeName = '/manage-groups';
 
+  Future <void> _refreshData (BuildContext context,) async {
+   await Provider.of<MembersGroupsModel>(context, listen: false).fetchAndSetGroupsMembers();
+  }
+
   @override
   Widget build(BuildContext context) {
     final data = Provider.of<MembersGroupsModel>(context);
@@ -16,14 +20,17 @@ class ManageGroupsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('Manage your groups')),
       drawer: MainDrawer(),
-      body: Column(children: [
-        Expanded(
-          child: ListView.builder(
-            itemBuilder: (ctx, index) => ManageGroupsItem(groups[index]),
-            itemCount: groups.length,
+      body: RefreshIndicator(
+        onRefresh: () => _refreshData(context),
+              child: Column(children: [
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (ctx, index) => ManageGroupsItem(groups[index]),
+              itemCount: groups.length,
+            ),
           ),
-        ),
-      ]),
+        ]),
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
