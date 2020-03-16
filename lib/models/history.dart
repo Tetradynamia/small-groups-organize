@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:t3/models/group_member.dart';
 
 class HistoryItem {
@@ -28,14 +31,30 @@ class History with ChangeNotifier {
     return _history.length;
   }
 
-  void addToHistory(
-      String id, List<List<GroupMember>> subGroups, String groupName, String note,) {
+  Future<void> addToHistory(
+    String id,
+    List<List<GroupMember>> subGroups,
+    String groupName,
+    String note,
+  ) async {
+    const url = 'https://flutter-project-4ed4f.firebaseio.com/history.json';
+    final timeStamp = DateTime.now();
+
+    final response = await http.post(url,
+        body: jsonEncode({
+          'groupName': groupName,
+          'note': note,
+          'dateTime': timeStamp.toIso8601String(),
+          'subGroups': subGroups.map((i) => i.map((k) =>k.toJson()).toList()).toList()
+              
+        }));
+
     _history.putIfAbsent(
       id,
       () => HistoryItem(
-        id: DateTime.now().toString(),
+        id: json.decode(response.body)['name'],
         subGroups: subGroups,
-        dateTime: DateTime.now(),
+        dateTime: timeStamp,
         groupName: groupName,
         note: note,
       ),
