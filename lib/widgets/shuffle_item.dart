@@ -17,7 +17,7 @@ class ShuffleItem extends StatelessWidget {
                           color: Theme.of(context).primaryColor,
                           child: ListTile(
                             title: Text(
-                              'In-group ${_currentInGroups.indexOf(subGroup) + 1}:',
+                              'Small group ${_currentInGroups.indexOf(subGroup) + 1}:',
                               style: TextStyle(
                                 fontSize: 16, color: Colors.white
                               ),

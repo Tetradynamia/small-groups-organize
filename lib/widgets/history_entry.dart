@@ -43,7 +43,7 @@ class _HistoryEntryState extends State<HistoryEntry> {
                           color: Theme.of(context).primaryColor,
                           child: ListTile(
                             title: Text(
-                              'In-group ${widget.entry.subGroups.indexOf(subGroup) + 1}:',
+                              'Small group ${widget.entry.subGroups.indexOf(subGroup) + 1}:',
                               style: TextStyle(
                                 fontSize: 16, color: Colors.white
                               ),

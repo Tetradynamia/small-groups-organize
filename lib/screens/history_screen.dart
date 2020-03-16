@@ -53,11 +53,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         history.history.values
                             .toList()
                             .where((entry) => entry.groupName == gName)
-                            .toList()[index],
+                            .toList().reversed.toList()[index],
                         history.history.entries
                             .toList()
                             .where((entry) => entry.value.groupName == gName)
-                            .toList()[index]
+                            .toList().reversed.toList()[index]
                             .key),
                     itemCount: itemcount),
               ),
