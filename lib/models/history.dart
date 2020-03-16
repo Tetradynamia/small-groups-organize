@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:t3/models/group_member.dart';
+import '../models/http_exception.dart';
 
 class HistoryItem {
   final String id;
@@ -31,6 +32,46 @@ class History with ChangeNotifier {
     return _history.length;
   }
 
+  Future<void> fetchAndSetHistory() async {
+    const url = 'https://flutter-project-4ed4f.firebaseio.com/history.json';
+
+    final response = await http.get(url);
+    final List<HistoryItem> loadedHistory = [];
+    final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
+    if (extractedData == null) {
+      return;
+    }
+
+    extractedData.forEach((id, historyData) {
+      loadedHistory.add(HistoryItem(
+        id: id,
+        dateTime: DateTime.parse(historyData['dateTime']),
+        groupName: historyData['groupName'],
+        note: historyData['note'],
+        subGroups: (historyData['subGroups'] as List<dynamic>)
+            .map((subGroup) => ((subGroup) as List<dynamic>)
+                .map((member) => GroupMember(
+                      memberName: member['memberName'],
+                      memberId: member['memberId'],
+                      groupName: member['groupName'],
+                    ))
+                .toList())
+            .toList(),
+      ));
+    });
+    loadedHistory.forEach((item) {
+      _history.putIfAbsent(
+          item.id,
+          () => HistoryItem(
+                id: item.id,
+                dateTime: item.dateTime,
+                groupName: item.groupName,
+                subGroups: item.subGroups,
+              ));
+    });
+    notifyListeners();
+  }
+
   Future<void> addToHistory(
     String id,
     List<List<GroupMember>> subGroups,
@@ -45,8 +86,8 @@ class History with ChangeNotifier {
           'groupName': groupName,
           'note': note,
           'dateTime': timeStamp.toIso8601String(),
-          'subGroups': subGroups.map((i) => i.map((k) =>k.toJson()).toList()).toList()
-              
+          'subGroups':
+              subGroups.map((i) => i.map((k) => k.toJson()).toList()).toList()
         }));
 
     _history.putIfAbsent(
@@ -62,9 +103,28 @@ class History with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeFromHistory(String id) {
+  Future<void> removeFromHistory(String id) async {
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/history/$id';
+    var existingHistory = _history[id];
     _history.remove(id);
-    print(_history.length);
     notifyListeners();
+
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      _history.putIfAbsent(
+          id,
+          () => HistoryItem(
+                id: existingHistory.id,
+                subGroups: existingHistory.subGroups,
+                dateTime: existingHistory.dateTime,
+                groupName: existingHistory.groupName,
+                note: existingHistory.note,
+              ));
+      notifyListeners();
+      throw HttpException('Could not delete member!');
+    }
+    existingHistory = null;
   }
+
+  notifyListeners();
 }

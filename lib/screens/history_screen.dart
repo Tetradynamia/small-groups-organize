@@ -1,10 +1,23 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/history.dart';
 import '../widgets/history_entry.dart';
 
-class HistoryScreen extends StatelessWidget {
+class HistoryScreen extends StatefulWidget {
+  @override
+  _HistoryScreenState createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends State<HistoryScreen> {
+
+  @override
+  void initState() {
+    Provider.of<History>(context, listen: false).fetchAndSetHistory();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final gName = ModalRoute.of(context).settings.arguments;
