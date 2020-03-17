@@ -18,7 +18,7 @@ class ManageGroupsScreen extends StatelessWidget {
     final data = Provider.of<MembersGroupsModel>(context);
     final groups = data.groups;
     return Scaffold(
-      appBar: AppBar(title: Text('Manage your groups')),
+      appBar: AppBar(title: const Text('Manage your groups')),
       drawer: MainDrawer(),
       body: RefreshIndicator(
         onRefresh: () => _refreshData(context),
@@ -32,12 +32,12 @@ class ManageGroupsScreen extends StatelessWidget {
         ]),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () {
           return showDialog(
               context: context,
               builder: (ctx) => AlertDialog(
-                  title: Text('Add group'), content: EditGroupsScreen(null)));
+                  title: const Text('Add group'), content: EditGroupsScreen(null)));
         },
       ),
     );

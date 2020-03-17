@@ -103,7 +103,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Okay'))
+                  child: const Text('Okay'))
             ],
           ),
         );
@@ -169,16 +169,16 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
                   Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        FlatButton(
-                            child: Row(
+                         FlatButton(
+                            child:  Row(
                               children: <Widget>[
-                                Icon(Icons.save),
-                                Text('Save'),
+                                const Icon(Icons.save),
+                               const Text('Save'),
                               ],
                             ),
                             onPressed: _saveForm),
                         FlatButton(
-                            child: Text('Cancel'),
+                            child: const Text('Cancel'),
                             onPressed: () {
                               Navigator.of(context).pop();
                             })
