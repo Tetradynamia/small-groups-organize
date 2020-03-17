@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:t3/widgets/drawer.dart';
 import 'package:provider/provider.dart';
-import 'package:t3/widgets/start.dart';
+// import 'package:t3/widgets/start.dart';
 
 import '../widgets/groups_grid.dart';
 import '../screens/manage_groups_screen.dart';
