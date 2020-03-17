@@ -5,9 +5,8 @@ import 'package:intl/intl.dart';
 
 class HistoryEntry extends StatefulWidget {
   final HistoryItem entry;
-  final String avain;
 
-  HistoryEntry(this.entry, this.avain);
+  HistoryEntry(this.entry);
 
   @override
   _HistoryEntryState createState() => _HistoryEntryState();
@@ -77,7 +76,7 @@ class _HistoryEntryState extends State<HistoryEntry> {
                                   actions: <Widget>[
                                     FlatButton(
                                       onPressed: () {
-                                        historyData.removeFromHistory(widget.avain);
+                                        historyData.removeFromHistory(widget.entry.id);
                                         Navigator.of(context).pop();
                                       },
                                       child: Row(

@@ -99,7 +99,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     //divide into groups
 
     for (var i = 0; i <= numberOfGroups; i += 1) {
-      if (_availableMembers.length >= sizeOfGroups - 1) {
+      if (_availableMembers.length >= sizeOfGroups ) {
         temp.add(_availableMembers.sublist(
             _availableMembers.length - sizeOfGroups, _availableMembers.length));
         _availableMembers.removeRange(
@@ -114,9 +114,9 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
       }
     }
 
-    // if (sizeOfGroups > 2 && _availableMembers.length == sizeOfGroups - 1) {
-    //   numberOfGroups = numberOfGroups + 1;
-    // }
+    if (sizeOfGroups > 2 && _availableMembers.length == sizeOfGroups - 1) {
+      temp.add(_availableMembers);
+    }
     question = temp;
     setState(() {
       // call set state to update the view
@@ -164,7 +164,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
           children: <Widget>[
             Column(
@@ -191,7 +191,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                 ),
                 if (_expanded)
                   Container(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Card(
                       child: Column(
                         children: [

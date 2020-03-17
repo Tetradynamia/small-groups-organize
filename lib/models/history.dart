@@ -22,10 +22,10 @@ class HistoryItem {
 }
 
 class History with ChangeNotifier {
-  Map<String, HistoryItem> _history = {};
+  List < HistoryItem> _history = [];
 
-  Map<String, HistoryItem> get history {
-    return {..._history};
+  List<HistoryItem> get history {
+    return [..._history];
   }
 
   int get itemCount {
@@ -59,16 +59,7 @@ class History with ChangeNotifier {
             .toList(),
       ));
     });
-    loadedHistory.forEach((item) {
-      _history.putIfAbsent(
-          item.id,
-          () => HistoryItem(
-                id: item.id,
-                dateTime: item.dateTime,
-                groupName: item.groupName,
-                subGroups: item.subGroups,
-              ));
-    });
+_history = loadedHistory;
     notifyListeners();
   }
 
@@ -90,9 +81,8 @@ class History with ChangeNotifier {
               subGroups.map((i) => i.map((k) => k.toJson()).toList()).toList()
         }));
 
-    _history.putIfAbsent(
-      id,
-      () => HistoryItem(
+    _history.insert(0,
+      HistoryItem(
         id: json.decode(response.body)['name'],
         subGroups: subGroups,
         dateTime: timeStamp,
@@ -105,21 +95,15 @@ class History with ChangeNotifier {
 
   Future<void> removeFromHistory(String id) async {
     final url = 'https://flutter-project-4ed4f.firebaseio.com/history/$id';
-    var existingHistory = _history[id];
+
+    var existingIndex = _history.indexWhere((entry) => entry.id == id);
+    var existingHistory = _history[existingIndex];
     _history.remove(id);
     notifyListeners();
 
     final response = await http.delete(url);
     if (response.statusCode >= 400) {
-      _history.putIfAbsent(
-          id,
-          () => HistoryItem(
-                id: existingHistory.id,
-                subGroups: existingHistory.subGroups,
-                dateTime: existingHistory.dateTime,
-                groupName: existingHistory.groupName,
-                note: existingHistory.note,
-              ));
+      _history.insert(existingIndex, existingHistory);
       notifyListeners();
       throw HttpException('Could not delete member!');
     }
