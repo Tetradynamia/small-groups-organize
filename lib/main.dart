@@ -6,7 +6,7 @@ import 'package:t3/screens/manage_groups_screen.dart';
 
 import './models/members_groups_model.dart';
 import './screens/tabs_screen.dart';
-// import './screens/group_overview.dart';
+import './screens/group_overview.dart';
 import './screens/auth_screen.dart';
 
 void main() => runApp(MyApp());
@@ -16,8 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(
-          value: Auth()),
+        ChangeNotifierProvider.value(value: Auth()),
         ChangeNotifierProvider.value(
           value: MembersGroupsModel(),
         ),
@@ -25,17 +24,19 @@ class MyApp extends StatelessWidget {
           value: History(),
         ),
       ],
-      child: MaterialApp(
-        title: 'MyShop',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+      child: Consumer<Auth>(
+        builder: (ctx, auth, _) => MaterialApp(
+          title: 'MyShop',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: auth.isAuth ? GroupOverview() : AuthScreen(),
+          routes: {
+            TabsScreen.routeName: (ctx) => TabsScreen(),
+            ManageGroupsScreen.routeName: (ctx) => ManageGroupsScreen(),
+            AuthScreen.routeName: (ctx) => AuthScreen(),
+          },
         ),
-        home: AuthScreen(),
-        routes: {
-          TabsScreen.routeName: (ctx) => TabsScreen(),
-          ManageGroupsScreen.routeName: (ctx) => ManageGroupsScreen(),
-          AuthScreen.routeName: (ctx) => AuthScreen(),
-        },
       ),
     );
   }
