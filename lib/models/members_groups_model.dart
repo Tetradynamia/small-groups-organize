@@ -7,9 +7,18 @@ import 'package:t3/models/http_exception.dart';
 import '../models/group_member.dart';
 import '../models/groups.dart';
 
+
+
+
+
 class MembersGroupsModel with ChangeNotifier {
   List<Group> _groups = [];
   List<GroupMember> _members = [];
+
+  final String authToken;
+  final String userId;
+
+  MembersGroupsModel (this.authToken, this.userId, this._groups, this._members);
 
   List<Group> get groups {
     return [..._groups];
@@ -36,10 +45,10 @@ class MembersGroupsModel with ChangeNotifier {
   }
 
   Future<void> fetchAndSetGroupsMembers() async {
-    const groupsUrl =
-        'https://flutter-project-4ed4f.firebaseio.com/groups.json';
-    const membersUrl =
-        'https://flutter-project-4ed4f.firebaseio.com/members.json';
+    final groupsUrl =
+        'https://flutter-project-4ed4f.firebaseio.com/groups.json?auth=$authToken&orderBy="creatorId"&equalTo="$userId"';
+    final membersUrl =
+        'https://flutter-project-4ed4f.firebaseio.com/members.json?auth=$authToken&orderBy="creatorId"&equalTo="$userId"';
 
     try {
       final groupsResponse = await http.get(groupsUrl);
@@ -88,7 +97,7 @@ class MembersGroupsModel with ChangeNotifier {
   }
 
   Future<void> addGroup(Group group) async {
-    const url = 'https://flutter-project-4ed4f.firebaseio.com/groups.json';
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/groups.json?auth=$authToken';
 
     try {
       final response = await http.post(
@@ -97,6 +106,7 @@ class MembersGroupsModel with ChangeNotifier {
           {
             'groupName': group.groupName,
             'groupDescription': group.groupDescription,
+            'creatorId': userId,
           },
         ),
       );
@@ -119,7 +129,7 @@ class MembersGroupsModel with ChangeNotifier {
 
     if (groupIndex >= 0) {
       final url =
-          'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json';
+          'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json?auth=$authToken';
       try {
         await http.patch(
           url,
@@ -142,7 +152,7 @@ class MembersGroupsModel with ChangeNotifier {
   }
 
   Future<void> deleteGroup(String id) async {
-    final url = 'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json';
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json?auth=$authToken';
     var groupIndex = _groups.indexWhere((group) => group.groupId == id);
     var existingGroup = _groups[groupIndex];
     var name = _groups[groupIndex].groupName;
@@ -173,7 +183,7 @@ class MembersGroupsModel with ChangeNotifier {
   }
 
   Future<void> addMember(GroupMember member) async {
-    const url = 'https://flutter-project-4ed4f.firebaseio.com/members.json';
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/members.json?auth=$authToken';
 
     try {
       final response = await http.post(
@@ -182,7 +192,7 @@ class MembersGroupsModel with ChangeNotifier {
           {
             'memberName': member.memberName,
             'groupName': member.groupName,
-            'isAbsent': member.isAbsent,
+            'creatorId': userId,
           },
         ),
       );
@@ -203,7 +213,7 @@ class MembersGroupsModel with ChangeNotifier {
     final groupIndex = _members.indexWhere((member) => member.memberId == id);
     if (groupIndex >= 0) {
       final url =
-          'https://flutter-project-4ed4f.firebaseio.com/members/$id.json';
+          'https://flutter-project-4ed4f.firebaseio.com/members/$id.json?auth=$authToken';
       try {
         await http.patch(
           url,
@@ -227,7 +237,7 @@ class MembersGroupsModel with ChangeNotifier {
   }
 
   Future<void> removeMember(String id) async {
-    final url = 'https://flutter-project-4ed4f.firebaseio.com/members/$id.json';
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/members/$id.json?auth=$authToken';
     final existingMemberIndex =
         _members.indexWhere((member) => member.memberId == id);
     var existingMember = _members[existingMemberIndex];

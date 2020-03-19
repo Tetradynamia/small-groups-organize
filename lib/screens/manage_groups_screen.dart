@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t3/widgets/manage_group_item.dart';
+import 'package:t3/widgets/start.dart';
 
 import '../widgets/drawer.dart';
 import '../models/members_groups_model.dart';
@@ -22,14 +23,17 @@ class ManageGroupsScreen extends StatelessWidget {
       drawer: MainDrawer(),
       body: RefreshIndicator(
         onRefresh: () => _refreshData(context),
-              child: Column(children: [
+              child: groups.isEmpty ? Start() : Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(children: [
           Expanded(
             child: ListView.builder(
-              itemBuilder: (ctx, index) => ManageGroupsItem(groups[index]),
-              itemCount: groups.length,
+                itemBuilder: (ctx, index) => ManageGroupsItem(groups[index]),
+                itemCount: groups.length,
             ),
           ),
         ]),
+              ),
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),

@@ -8,6 +8,7 @@ import './models/members_groups_model.dart';
 import './screens/tabs_screen.dart';
 import './screens/group_overview.dart';
 import './screens/auth_screen.dart';
+import './screens/splash_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,11 +18,20 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: Auth()),
-        ChangeNotifierProvider.value(
-          value: MembersGroupsModel(),
+        ChangeNotifierProxyProvider<Auth, MembersGroupsModel>(
+          create: (ctx) => MembersGroupsModel(null, null, [], []),
+          update: (ctx, auth, previousMGM) => MembersGroupsModel(
+              auth.token,
+              auth.userId,
+              previousMGM.groups == null ? [] : previousMGM.groups,
+              previousMGM.members == null ? [] : previousMGM.members),
         ),
-        ChangeNotifierProvider.value(
-          value: History(),
+        ChangeNotifierProxyProvider<Auth, History>(
+          create: (ctx) => History(null, null, []),
+          update: (ctx, auth, previousHistory) => History(
+              auth.token,
+              auth.userId,
+              previousHistory.history == null ? [] : previousHistory.history),
         ),
       ],
       child: Consumer<Auth>(
@@ -30,7 +40,16 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: auth.isAuth ? GroupOverview() : AuthScreen(),
+          home: auth.isAuth
+              ? GroupOverview()
+              : FutureBuilder(
+                  future: auth.tryAutoLogin(),
+                  builder: (ctx, authResultSnapshot) =>
+                      authResultSnapshot.connectionState ==
+                              ConnectionState.waiting
+                          ? SplashScreen()
+                          : AuthScreen(),
+                ),
           routes: {
             TabsScreen.routeName: (ctx) => TabsScreen(),
             ManageGroupsScreen.routeName: (ctx) => ManageGroupsScreen(),

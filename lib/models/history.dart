@@ -22,7 +22,12 @@ class HistoryItem {
 }
 
 class History with ChangeNotifier {
-  List < HistoryItem> _history = [];
+  final String authToken;
+  final String userId;
+
+  History(this.authToken, this.userId, this._history);
+
+  List<HistoryItem> _history = [];
 
   List<HistoryItem> get history {
     return [..._history];
@@ -33,7 +38,7 @@ class History with ChangeNotifier {
   }
 
   Future<void> fetchAndSetHistory() async {
-    const url = 'https://flutter-project-4ed4f.firebaseio.com/history.json';
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/history/$userId.json?auth=$authToken';
 
     final response = await http.get(url);
     final List<HistoryItem> loadedHistory = [];
@@ -59,7 +64,7 @@ class History with ChangeNotifier {
             .toList(),
       ));
     });
-_history = loadedHistory;
+    _history = loadedHistory;
     notifyListeners();
   }
 
@@ -69,7 +74,7 @@ _history = loadedHistory;
     String groupName,
     String note,
   ) async {
-    const url = 'https://flutter-project-4ed4f.firebaseio.com/history.json';
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/history/$userId.json?auth=$authToken';
     final timeStamp = DateTime.now();
 
     final response = await http.post(url,
@@ -81,7 +86,8 @@ _history = loadedHistory;
               subGroups.map((i) => i.map((k) => k.toJson()).toList()).toList()
         }));
 
-    _history.insert(0,
+    _history.insert(
+      0,
       HistoryItem(
         id: json.decode(response.body)['name'],
         subGroups: subGroups,
@@ -94,7 +100,7 @@ _history = loadedHistory;
   }
 
   Future<void> removeFromHistory(String id) async {
-    final url = 'https://flutter-project-4ed4f.firebaseio.com/history/$id';
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/history/$id?auth=$authToken';
 
     var existingIndex = _history.indexWhere((entry) => entry.id == id);
     var existingHistory = _history[existingIndex];
