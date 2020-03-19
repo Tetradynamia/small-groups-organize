@@ -12,6 +12,7 @@ import '../models/groups.dart';
 
 
 class MembersGroupsModel with ChangeNotifier {
+
   List<Group> _groups = [];
   List<GroupMember> _members = [];
 
@@ -20,29 +21,30 @@ class MembersGroupsModel with ChangeNotifier {
 
   MembersGroupsModel (this.authToken, this.userId, this._groups, this._members);
 
+
   List<Group> get groups {
     return [..._groups];
   }
 
-  List<GroupMember> get members {
-    return [..._members];
-  }
+  // List<GroupMember> get members {
+  //   return [..._members];
+  // }
 
-  List<GroupMember> get shuffleMembers {
-    return [..._members];
-  }
+  // List<GroupMember> get shuffleMembers {
+  //   return [..._members];
+  // }
 
-  List<GroupMember> get availableMembers {
-    return [..._members.where((member) => member.isAbsent == false)];
-  }
+  // List<GroupMember> get availableMembers {
+  //   return [..._members.where((member) => member.isAbsent == false)];
+  // }
 
   Group findGroupById(String id) {
     return _groups.firstWhere((group) => group.groupId == id);
   }
 
-  GroupMember findMemberById(String id) {
-    return _members.firstWhere((member) => member.memberId == id);
-  }
+  // GroupMember findMemberById(String id) {
+  //   return _members.firstWhere((member) => member.memberId == id);
+  // }
 
   Future<void> fetchAndSetGroupsMembers() async {
     final groupsUrl =
@@ -115,6 +117,7 @@ class MembersGroupsModel with ChangeNotifier {
         groupId: json.decode(response.body)['name'],
         groupName: group.groupName,
         groupDescription: group.groupDescription,
+
       );
       _groups.add(newGroup);
       notifyListeners();
@@ -122,6 +125,7 @@ class MembersGroupsModel with ChangeNotifier {
       print(error);
       throw error;
     }
+
   }
 
   Future<void> updateGroup(String id, Group updatedGroup) async {
@@ -151,6 +155,7 @@ class MembersGroupsModel with ChangeNotifier {
     notifyListeners();
   }
 
+
   Future<void> deleteGroup(String id) async {
     final url = 'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json?auth=$authToken';
     var groupIndex = _groups.indexWhere((group) => group.groupId == id);
@@ -174,13 +179,16 @@ class MembersGroupsModel with ChangeNotifier {
 
     // _members.removeWhere((member) => member.groupName == name);
     // notifyListeners();
+
   }
 
-  void toggleAbsent(GroupMember member) {
-    final memberIndex = _members.indexOf(member);
-    _members[memberIndex].toggleIsAbsent();
+  void toggleAbsent(String groupId, GroupMember member) {
+    final group = _groups.firstWhere((group) => group.groupId == groupId);
+    final memberIndex = group.groupMembers.indexOf(member);
+    group.groupMembers[memberIndex].toggleIsAbsent();
     notifyListeners();
   }
+
 
   Future<void> addMember(GroupMember member) async {
     final url = 'https://flutter-project-4ed4f.firebaseio.com/members.json?auth=$authToken';
@@ -230,11 +238,36 @@ class MembersGroupsModel with ChangeNotifier {
         print(error);
         throw error;
       }
+      
+  void addMember(String groupId, GroupMember member) {
+    final newMember = GroupMember(
+        memberId: DateTime.now().toString(),
+        memberName: member.memberName,
+        groupName: member.groupName);
+    _groups
+        .firstWhere((group) => group.groupId == groupId)
+        .groupMembers
+        .insert(0, newMember);
+    notifyListeners();
+  }
+
+  void updateMember(
+      String groupId, String memberId, GroupMember updatedMember) {
+    final memberIndex = _groups
+        .firstWhere((group) => group.groupId == groupId)
+        .groupMembers
+        .indexWhere((member) => member.memberId == memberId);
+    if (memberIndex >= 0) {
+      _groups
+          .firstWhere((group) => group.groupId == groupId)
+          .groupMembers[memberIndex] = updatedMember;
+
     } else {
       print('...');
     }
     notifyListeners();
   }
+
 
   Future<void> removeMember(String id) async {
     final url = 'https://flutter-project-4ed4f.firebaseio.com/members/$id.json?auth=$authToken';
@@ -253,3 +286,4 @@ class MembersGroupsModel with ChangeNotifier {
     existingMember = null;
   }
 }
+

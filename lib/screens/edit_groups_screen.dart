@@ -27,8 +27,12 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
     'description': '',
   };
   var _isInit = true;
+
   String _oldName;
   var _isLoading = false;
+
+  
+
 
   @override
   didChangeDependencies() {
@@ -41,7 +45,6 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
           'name': _editedGroup.groupName,
           'description': _editedGroup.groupDescription,
         };
-        _oldName = _editedGroup.groupName;
       }
     }
 
@@ -68,6 +71,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
     if (_editedGroup.groupId != null) {
       await Provider.of<MembersGroupsModel>(context, listen: false)
           .updateGroup(_editedGroup.groupId, _editedGroup);
+
       if (_editedGroup.groupName != _oldName) {
         List _helperList = [];
         Provider.of<MembersGroupsModel>(context, listen: false)
@@ -88,6 +92,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
                       groupName: _editedGroup.groupName));
         });
       }
+
     } else {
       try {
         await Provider.of<MembersGroupsModel>(context, listen: false)
@@ -122,6 +127,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return _isLoading
         ? Center(
             child: CircularProgressIndicator(),
@@ -187,5 +193,62 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
               ),
             ),
           );
+
+    return Form(
+      key: _form,
+      child: SingleChildScrollView(
+        child: Column(children: [
+          TextFormField(
+            initialValue: _initValues['name'],
+            decoration: InputDecoration(labelText: 'Name:'),
+            textInputAction: TextInputAction.next,
+            onFieldSubmitted: (_) {
+              FocusScope.of(context).requestFocus(_descriptionFocusNode);
+            },
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please provide a valid name';
+              }
+              return null;
+            },
+            onSaved: (value) {
+              _editedGroup = Group(
+                  groupId: _editedGroup.groupId,
+                  groupName: value,
+                  groupDescription: _editedGroup.groupDescription);
+            },
+          ),
+          TextFormField(
+            initialValue: _initValues['description'],
+            decoration: InputDecoration(labelText: 'Description:'),
+            maxLines: 3,
+            keyboardType: TextInputType.multiline,
+            focusNode: _descriptionFocusNode,
+            onSaved: (value) {
+              _editedGroup = Group(
+                  groupId: _editedGroup.groupId,
+                  groupName: _editedGroup.groupName,
+                  groupDescription: value);
+            },
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            FlatButton(
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.save),
+                    Text('Save'),
+                  ],
+                ),
+                onPressed: _saveForm),
+            FlatButton(
+                child: Text('Cance'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                })
+          ])
+        ]),
+      ),
+    );
+
   }
 }
