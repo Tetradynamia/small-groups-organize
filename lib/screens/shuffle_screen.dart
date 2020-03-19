@@ -16,6 +16,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
   var sizeController = TextEditingController();
   int _radioValue = -1;
   var _expanded = true;
+  var _isLoading = false;
 
   // Variables to hold questions list and current question
   List<GroupMember> _availableMembers;
@@ -101,7 +102,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     //divide into groups
 
     for (var i = 0; i <= numberOfGroups; i += 1) {
-      if (_availableMembers.length >= sizeOfGroups - 1) {
+      if (_availableMembers.length >= sizeOfGroups ) {
         temp.add(_availableMembers.sublist(
             _availableMembers.length - sizeOfGroups, _availableMembers.length));
         _availableMembers.removeRange(
@@ -116,9 +117,9 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
       }
     }
 
-    // if (sizeOfGroups > 2 && _availableMembers.length == sizeOfGroups - 1) {
-    //   numberOfGroups = numberOfGroups + 1;
-    // }
+    if (sizeOfGroups > 2 && _availableMembers.length == sizeOfGroups - 1) {
+      temp.add(_availableMembers);
+    }
     question = temp;
     setState(() {
       // call set state to update the view
@@ -166,7 +167,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
           children: <Widget>[
             Column(
@@ -193,7 +194,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                 ),
                 if (_expanded)
                   Container(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Card(
                       child: Column(
                         children: [
@@ -326,12 +327,19 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                   context: context,
                   builder: (ctx) => AlertDialog(
                         title: Text('Want to save?'),
-                        content: Text('Are you sure?'),
+                        content: _isLoading
+                            ? Center(child: CircularProgressIndicator())
+                            : Text('Are you sure?'),
                         actions: <Widget>[
                           FlatButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(true);
-                                Provider.of<History>(context, listen: false)
+                              onPressed: () async {
+                              
+                                
+                                  setState(() {
+                                  _isLoading = true;
+                                });
+                                await Provider.of<History>(context,
+                                        listen: false)
                                     .addToHistory(
                                         DateTime.now().toString(),
                                         _currentInGroups,
@@ -339,6 +347,10 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                             .settings
                                             .arguments,
                                         note);
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                                Navigator.of(context).pop(true);
                                 Scaffold.of(context).showSnackBar(SnackBar(
                                   content: Text(
                                     'Added to history!',

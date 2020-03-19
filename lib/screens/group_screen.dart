@@ -34,15 +34,15 @@ class GroupScreen extends StatelessWidget {
                   ],
                 )),
               ),
-              Divider(),
+              const Divider(),
               Row(
                 children: [
-                  Text('Is absent?'),
+                   const Text('Is absent?'),
                 ],
               )
             ]),
           ),
-          Divider(),
+         const Divider(),
           Expanded(
             child: ListView.builder(
               itemCount: thisGroupMembers.length,

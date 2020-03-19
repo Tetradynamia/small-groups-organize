@@ -18,4 +18,10 @@ void toggleIsAbsent() {
   isAbsent =! isAbsent;
 }
 
+Map toJson() => {
+  'memberId': memberId,
+  'memberName': memberName,
+  'groupName': groupName,
+};
+
 }

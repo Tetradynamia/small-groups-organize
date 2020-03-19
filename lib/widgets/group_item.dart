@@ -47,6 +47,23 @@ class GroupItem extends StatelessWidget {
               bottomLeft: Radius.circular(6),
               bottomRight: Radius.circular(50)),
         ),
+
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                name,
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              Column(
+                children: <Widget>[
+                  Text('Members;'),
+                  Text(
+                    '${thisGroupMembers.length}',
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -60,12 +77,16 @@ class GroupItem extends StatelessWidget {
                 Text(
                   '${members.length}',
                   style: TextStyle(fontSize: 20, color: Colors.white
+
                   ),
-                ),
-              ],
-            ),
-            Text(description, style: TextStyle( color: Colors.white),),
-          ],
+                ],
+              ),
+              Text(
+                description,
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
         ),
       ),
     );

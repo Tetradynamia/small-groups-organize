@@ -28,7 +28,7 @@ class MemberItem extends StatelessWidget {
                 ));
               }
             }),
-        title: Text(member.memberName, style:TextStyle(color: member.isAbsent ? Colors.grey : Colors.black )),
+        title: Text(member.memberName, style: TextStyle(color: member.isAbsent ? Colors.grey : Colors.black), ),
       ),
     );
   }

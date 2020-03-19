@@ -54,7 +54,11 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             title: Text('Add member'),
+
+                            content: EditMembers(null, widget.group.groupName),
+
                             content: EditMembers(null ,widget.group.groupId),
+
                           ),
                         );
                       }),
@@ -83,10 +87,21 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                       'Are you sure you want to delete ${widget.group.groupName} and all its members?'),
                                   actions: <Widget>[
                                     FlatButton(
-                                      onPressed: () {
-                                        Provider.of<MembersGroupsModel>(context,
-                                                listen: false)
-                                            .deleteGroup(widget.group.groupId);
+                                      onPressed: () async {
+                                        try {
+                                          await Provider.of<MembersGroupsModel>(
+                                                  context,
+                                                  listen: false)
+                                              .deleteGroup(
+                                                  widget.group.groupId);
+                                          
+                                        } catch (error) {
+                                          Scaffold.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Deleting failed!'),
+                                            ),
+                                          );
+                                        }
                                         Navigator.of(context).pop();
                                       },
                                       child: Row(
@@ -124,8 +139,76 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                     title: Text(widget.group.groupMembers[index].memberName),
                     trailing: Container(
                       width: 150,
-                      child: Row(mainAxisAlignment: MainAxisAlignment.end,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+
+                          IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                return showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: Text('Edit member'),
+                                    content: EditMembers(
+                                        groupData[index].memberId,
+                                        widget.group.groupName),
+                                  ),
+                                );
+                              }),
+                          IconButton(
+                              icon: Icon(Icons.delete,
+                                  color: Theme.of(context).errorColor),
+                              onPressed: () {
+                                return showDialog(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                          title: Text('Confirm remove'),
+                                          content: Text(
+                                              'Are you sure you want to remove ${groupData[index].memberName}?'),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                              onPressed: () async {
+                                                try {
+                                                  await Provider.of<
+                                                              MembersGroupsModel>(
+                                                          context,
+                                                          listen: false)
+                                                      .removeMember(
+                                                          groupData[index]
+                                                              .memberId);
+                                                } catch (error) {
+                                                  Scaffold.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                          'Deleting failed!'),
+                                                    ),
+                                                  );
+                                                }
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.delete,
+                                                    color: Theme.of(context)
+                                                        .errorColor,
+                                                  ),
+                                                  Text('Delete')
+                                                ],
+                                              ),
+                                            ),
+                                            FlatButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Cancel'),
+                                            )
+                                          ],
+                                        ));
+                              }),
+
                           IconButton(icon: Icon(Icons.edit), onPressed: () {
                             return showDialog(
                           context: context,
@@ -170,6 +253,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                     )
                                   ],
                                 ));}),
+
                         ],
                       ),
                     ),

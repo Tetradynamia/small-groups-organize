@@ -24,6 +24,7 @@ class _EditMembersState extends State<EditMembers> {
     'name': '',
   };
   var _isInit = true;
+  var _isLoading = false;
 
   @override
   void didChangeDependencies() {
@@ -50,12 +51,13 @@ class _EditMembersState extends State<EditMembers> {
     super.dispose();
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final _isValid = _form.currentState.validate();
     if (!_isValid) {
       return;
     }
     _form.currentState.save();
+
     if (widget.memberId != null) {
       Provider.of<MembersGroupsModel>(context, listen: false)
           .updateMember(widget.groupId, _editedMember.memberId, _editedMember);
@@ -65,11 +67,93 @@ class _EditMembersState extends State<EditMembers> {
       print(widget.groupId);
     }
 
-    Navigator.of(context).pop();
+
+    setState(() {
+      _isLoading = true;
+    });
+    if (widget.memberId != null) {
+     await Provider.of<MembersGroupsModel>(context, listen: false)
+          .updateMember(_editedMember.memberId, _editedMember);
+     
+    } else {
+      try {
+        await Provider.of<MembersGroupsModel>(context, listen: false)
+            .addMember(_editedMember);
+      } catch (error) {
+        await showDialog<Null>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error occured!'),
+            content: Text('Something went wrong!'),
+            actions: [
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Okay'))
+            ],
+          ),
+        );
+      } 
+    }
+     setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    return  _isLoading
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Form(
+        key: _form,
+        child: SingleChildScrollView(
+          child: Column(children: [
+            TextFormField(
+              autofocus: true,
+              initialValue: _initValues['name'],
+              decoration: InputDecoration(labelText: 'Name:'),
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) {
+                Navigator.of(context).pop();
+              },
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please provide a valid name';
+                }
+                return null;
+              },
+              onSaved: (value) {
+                _editedMember = GroupMember(
+                    memberId: _editedMember.memberId,
+                    memberName: value,
+                    groupName: widget.groupName);
+              },
+            ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              FlatButton(
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.save),
+                      Text('Save'),
+                    ],
+                  ),
+                  onPressed: _saveForm),
+              FlatButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })
+            ])
+          ]),
+        ),
+
     return Form(
       key: _form,
       child: SingleChildScrollView(
@@ -111,6 +195,7 @@ class _EditMembersState extends State<EditMembers> {
                 })
           ])
         ]),
+
       ),
     );
   }
