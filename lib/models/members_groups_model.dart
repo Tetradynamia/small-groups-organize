@@ -9,7 +9,7 @@ import '../models/groups.dart';
 
 
 
-
+enum Mode {CloudMode, LocalMode}
 
 class MembersGroupsModel with ChangeNotifier {
 
@@ -18,6 +18,7 @@ class MembersGroupsModel with ChangeNotifier {
 
   final String authToken;
   final String userId;
+  Mode mode;
 
   MembersGroupsModel (this.authToken, this.userId, this._groups, this._members);
 
@@ -26,25 +27,29 @@ class MembersGroupsModel with ChangeNotifier {
     return [..._groups];
   }
 
-  // List<GroupMember> get members {
-  //   return [..._members];
-  // }
+  List<GroupMember> get members {
+    return [..._members];
+  }
 
   // List<GroupMember> get shuffleMembers {
   //   return [..._members];
   // }
 
-  // List<GroupMember> get availableMembers {
-  //   return [..._members.where((member) => member.isAbsent == false)];
-  // }
+  List<GroupMember> get availableMembers {
+    return [..._members.where((member) => member.isAbsent == false)];
+  }
 
   Group findGroupById(String id) {
     return _groups.firstWhere((group) => group.groupId == id);
   }
 
-  // GroupMember findMemberById(String id) {
-  //   return _members.firstWhere((member) => member.memberId == id);
-  // }
+  GroupMember findMemberById(String id) {
+    return _members.firstWhere((member) => member.memberId == id);
+  }
+
+  void switchMode(value) {
+    mode = value;
+  }
 
   Future<void> fetchAndSetGroupsMembers() async {
     final groupsUrl =
@@ -182,10 +187,10 @@ class MembersGroupsModel with ChangeNotifier {
 
   }
 
-  void toggleAbsent(String groupId, GroupMember member) {
-    final group = _groups.firstWhere((group) => group.groupId == groupId);
-    final memberIndex = group.groupMembers.indexOf(member);
-    group.groupMembers[memberIndex].toggleIsAbsent();
+  void toggleAbsent(GroupMember member) {
+    
+    final memberIndex = members.indexOf(member);
+    members[memberIndex].toggleIsAbsent();
     notifyListeners();
   }
 
@@ -209,13 +214,29 @@ class MembersGroupsModel with ChangeNotifier {
           memberId: json.decode(response.body)['name'],
           memberName: member.memberName,
           groupName: member.groupName,
-          isAbsent: false);
+          isAbsent: member.isAbsent);
       _members.insert(0, newMember);
       notifyListeners();
     } catch (error) {
       throw error;
     }
   }
+
+    Future<void> removeMember(String id) async {
+    final url = 'https://flutter-project-4ed4f.firebaseio.com/members/$id.json?auth=$authToken';
+    final existingMemberIndex =
+        _members.indexWhere((member) => member.memberId == id);
+    var existingMember = _members[existingMemberIndex];
+    _members.removeAt(existingMemberIndex);
+    notifyListeners();
+
+    final response = await http.delete(url);
+    if (response.statusCode >= 400) {
+      _members.insert(existingMemberIndex, existingMember);
+      notifyListeners();
+      throw HttpException('Could not delete member!');
+    }
+    existingMember = null;} 
 
   Future<void> updateMember(String id, GroupMember updatedMember) async {
     final groupIndex = _members.indexWhere((member) => member.memberId == id);
@@ -238,52 +259,8 @@ class MembersGroupsModel with ChangeNotifier {
         print(error);
         throw error;
       }
-      
-  void addMember(String groupId, GroupMember member) {
-    final newMember = GroupMember(
-        memberId: DateTime.now().toString(),
-        memberName: member.memberName,
-        groupName: member.groupName);
-    _groups
-        .firstWhere((group) => group.groupId == groupId)
-        .groupMembers
-        .insert(0, newMember);
-    notifyListeners();
-  }
-
-  void updateMember(
-      String groupId, String memberId, GroupMember updatedMember) {
-    final memberIndex = _groups
-        .firstWhere((group) => group.groupId == groupId)
-        .groupMembers
-        .indexWhere((member) => member.memberId == memberId);
-    if (memberIndex >= 0) {
-      _groups
-          .firstWhere((group) => group.groupId == groupId)
-          .groupMembers[memberIndex] = updatedMember;
-
-    } else {
-      print('...');
-    }
-    notifyListeners();
-  }
 
 
-  Future<void> removeMember(String id) async {
-    final url = 'https://flutter-project-4ed4f.firebaseio.com/members/$id.json?auth=$authToken';
-    final existingMemberIndex =
-        _members.indexWhere((member) => member.memberId == id);
-    var existingMember = _members[existingMemberIndex];
-    _members.removeAt(existingMemberIndex);
-    notifyListeners();
 
-    final response = await http.delete(url);
-    if (response.statusCode >= 400) {
-      _members.insert(existingMemberIndex, existingMember);
-      notifyListeners();
-      throw HttpException('Could not delete member!');
-    }
-    existingMember = null;
-  }
-}
 
+    }}}

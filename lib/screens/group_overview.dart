@@ -9,6 +9,7 @@ import '../screens/manage_groups_screen.dart';
 import '../models/members_groups_model.dart';
 
 class GroupOverview extends StatelessWidget {
+  static const routeName ='/groups-overview';
   @override
   Widget build(BuildContext context) {
     return Scaffold(

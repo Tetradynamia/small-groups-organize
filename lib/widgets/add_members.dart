@@ -60,21 +60,19 @@ class _EditMembersState extends State<EditMembers> {
 
     if (widget.memberId != null) {
       Provider.of<MembersGroupsModel>(context, listen: false)
-          .updateMember(widget.groupId, _editedMember.memberId, _editedMember);
+          .updateMember(_editedMember.memberId, _editedMember);
     } else {
       Provider.of<MembersGroupsModel>(context, listen: false)
-          .addMember(widget.groupId, _editedMember);
+          .addMember(_editedMember);
       print(widget.groupId);
     }
-
 
     setState(() {
       _isLoading = true;
     });
     if (widget.memberId != null) {
-     await Provider.of<MembersGroupsModel>(context, listen: false)
+      await Provider.of<MembersGroupsModel>(context, listen: false)
           .updateMember(_editedMember.memberId, _editedMember);
-     
     } else {
       try {
         await Provider.of<MembersGroupsModel>(context, listen: false)
@@ -94,109 +92,69 @@ class _EditMembersState extends State<EditMembers> {
             ],
           ),
         );
-      } 
+      }
     }
-     setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context).pop();
+    setState(() {
+      _isLoading = false;
+    });
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    return  _isLoading
+    return _isLoading
         ? Center(
             child: CircularProgressIndicator(),
           )
         : Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Form(
-        key: _form,
-        child: SingleChildScrollView(
-          child: Column(children: [
-            TextFormField(
-              autofocus: true,
-              initialValue: _initValues['name'],
-              decoration: InputDecoration(labelText: 'Name:'),
-              textInputAction: TextInputAction.done,
-              onFieldSubmitted: (_) {
-                Navigator.of(context).pop();
-              },
-              validator: (value) {
-                if (value.isEmpty) {
-                  return 'Please provide a valid name';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                _editedMember = GroupMember(
-                    memberId: _editedMember.memberId,
-                    memberName: value,
-                    groupName: widget.groupName);
-              },
-            ),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-              FlatButton(
-                  child: Row(
-                    children: <Widget>[
-                      Icon(Icons.save),
-                      Text('Save'),
-                    ],
-                  ),
-                  onPressed: _saveForm),
-              FlatButton(
-                  child: Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  })
-            ])
-          ]),
-        ),
-
-    return Form(
-      key: _form,
-      child: SingleChildScrollView(
-        child: Column(children: [
-          TextFormField(
-            autofocus: true,
-            initialValue: _initValues['name'],
-            decoration: InputDecoration(labelText: 'Name:'),
-            textInputAction: TextInputAction.done,
-            onFieldSubmitted: (_) {
-              Navigator.of(context).pop();
-            },
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Please provide a valid name';
-              }
-              return null;
-            },
-            onSaved: (value) {
-              _editedMember = GroupMember(
-                  memberId: _editedMember.memberId,
-                  memberName: value,
-                  groupName: '');
-            },
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            FlatButton(
-                child: Row(
-                  children: <Widget>[
-                    Icon(Icons.save),
-                    Text('Save'),
+            padding: const EdgeInsets.all(8.0),
+            child: Form(
+              key: _form,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      autofocus: true,
+                      initialValue: _initValues['name'],
+                      decoration: InputDecoration(labelText: 'Name:'),
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) {
+                        Navigator.of(context).pop();
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please provide a valid name';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _editedMember = GroupMember(
+                            memberId: _editedMember.memberId,
+                            memberName: value,
+                            groupName: _editedMember.groupName);
+                      },
+                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          FlatButton(
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(Icons.save),
+                                  Text('Save'),
+                                ],
+                              ),
+                              onPressed: _saveForm),
+                          FlatButton(
+                              child: Text('Cancel'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              })
+                        ])
                   ],
                 ),
-                onPressed: _saveForm),
-            FlatButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                })
-          ])
-        ]),
-
-      ),
-    );
+              ),
+            ),
+          );
   }
 }

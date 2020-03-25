@@ -19,15 +19,15 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
 
   @override
   Widget build(BuildContext context) {
-    // final groupData = Provider.of<MembersGroupsModel>(context)
-    //     .members
-    //     .where((member) => member.groupName == widget.group.groupName)
-    //     .toList();
+    final groupData = Provider.of<MembersGroupsModel>(context)
+        .members
+        .where((member) => member.groupName == widget.group.groupName)
+        .toList();
     return Column(
       children: <Widget>[
         Card(
           child: ListTile(
-            leading: CircleAvatar(child: Text('${widget.group.groupMembers.length}')),
+            leading: CircleAvatar(child: Text('0')),
             title: Text('${widget.group.groupName}'),
             subtitle: Text(widget.group.groupDescription),
             trailing: Container(
@@ -37,15 +37,16 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                   IconButton(
                     icon:
                         Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-                    onPressed: widget.group.groupMembers.length > 0
-                        ? () {
-                            setState(
-                              () {
-                                _expanded = !_expanded;
-                              },
-                            );
-                          }
-                        : null,
+                     onPressed: //widget.group.groupMembers.length > 0
+                    //     ? () {
+                    //         setState(
+                    //           () {
+                    //             _expanded = !_expanded;
+                    //           },
+                    //         );
+                    //       }
+                    //     : 
+                    null,
                   ),
                   IconButton(
                       icon: Icon(Icons.person_add),
@@ -57,7 +58,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
 
                             content: EditMembers(null, widget.group.groupName),
 
-                            content: EditMembers(null ,widget.group.groupId),
+                          
 
                           ),
                         );
@@ -232,7 +233,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                       onPressed: () {
                                         Provider.of<MembersGroupsModel>(context,
                                                 listen: false)
-                                            .removeMember(widget.group.groupId, widget.group.groupMembers[index].memberId);
+                                            .removeMember( widget.group.groupMembers[index].memberId);
                                         Navigator.of(context).pop();
                                       },
                                       child: Row(
@@ -259,7 +260,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                     ),
                   ),
                 ),
-                itemCount: widget.group.groupMembers.length,
+                itemCount: 20,
               ),
             ),
           ),

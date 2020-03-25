@@ -29,10 +29,11 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     super.didChangeDependencies();
     final id = ModalRoute.of(context).settings.arguments;
 
-    final thisGroup = Provider.of<MembersGroupsModel>(context, listen: false)
-        .groups
-        .firstWhere((group) => group.groupId == id);
-    _availableMembers = thisGroup.groupMembers
+   
+    _availableMembers = Provider.of<MembersGroupsModel>(context, listen: false)
+        .members
+        .where((member) => member.groupName == id)
+        .toList()
         .where((member) => member.isAbsent == false)
         .toList();
   }
@@ -102,7 +103,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     //divide into groups
 
     for (var i = 0; i <= numberOfGroups; i += 1) {
-      if (_availableMembers.length >= sizeOfGroups ) {
+      if (_availableMembers.length >= sizeOfGroups) {
         temp.add(_availableMembers.sublist(
             _availableMembers.length - sizeOfGroups, _availableMembers.length));
         _availableMembers.removeRange(
@@ -333,9 +334,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                         actions: <Widget>[
                           FlatButton(
                               onPressed: () async {
-                              
-                                
-                                  setState(() {
+                                setState(() {
                                   _isLoading = true;
                                 });
                                 await Provider.of<History>(context,

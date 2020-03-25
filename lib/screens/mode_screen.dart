@@ -11,7 +11,7 @@ import '../screens/auth_screen.dart';
 import '../screens/a_sceen.dart';
 import '../models/members_groups_model.dart';
 
-// enum Mode {LocalMode, CloudMode}
+enum Mode {LocalMode, CloudMode}
 
 class ModeScreen extends StatelessWidget {
   static const routeName = '/mode';
