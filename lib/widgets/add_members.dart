@@ -6,9 +6,9 @@ import '../models/members_groups_model.dart';
 
 class EditMembers extends StatefulWidget {
   final String memberId;
-  final String groupName;
+  final String groupId;
 
-  EditMembers(this.memberId, this.groupName);
+  EditMembers(this.memberId, this.groupId);
   @override
   _EditMembersState createState() => _EditMembersState();
 }
@@ -31,7 +31,10 @@ class _EditMembersState extends State<EditMembers> {
     if (_isInit) {
       if (widget.memberId != null) {
         _editedMember = Provider.of<MembersGroupsModel>(context, listen: false)
-            .findMemberById(widget.memberId);
+            .groups
+            .firstWhere((group) => group.groupId == widget.groupId)
+            .groupMembers
+            .firstWhere((member) => member.memberId == widget.memberId);
 
         _initValues = {
           'name': _editedMember.memberName,
@@ -54,6 +57,16 @@ class _EditMembersState extends State<EditMembers> {
       return;
     }
     _form.currentState.save();
+
+    if (widget.memberId != null) {
+      Provider.of<MembersGroupsModel>(context, listen: false)
+          .updateMember(widget.groupId, _editedMember.memberId, _editedMember);
+    } else {
+      Provider.of<MembersGroupsModel>(context, listen: false)
+          .addMember(widget.groupId, _editedMember);
+      print(widget.groupId);
+    }
+
 
     setState(() {
       _isLoading = true;
@@ -91,6 +104,7 @@ class _EditMembersState extends State<EditMembers> {
 
   @override
   Widget build(BuildContext context) {
+
     return  _isLoading
         ? Center(
             child: CircularProgressIndicator(),
@@ -139,6 +153,49 @@ class _EditMembersState extends State<EditMembers> {
             ])
           ]),
         ),
+
+    return Form(
+      key: _form,
+      child: SingleChildScrollView(
+        child: Column(children: [
+          TextFormField(
+            autofocus: true,
+            initialValue: _initValues['name'],
+            decoration: InputDecoration(labelText: 'Name:'),
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: (_) {
+              Navigator.of(context).pop();
+            },
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please provide a valid name';
+              }
+              return null;
+            },
+            onSaved: (value) {
+              _editedMember = GroupMember(
+                  memberId: _editedMember.memberId,
+                  memberName: value,
+                  groupName: '');
+            },
+          ),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+            FlatButton(
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.save),
+                    Text('Save'),
+                  ],
+                ),
+                onPressed: _saveForm),
+            FlatButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                })
+          ])
+        ]),
+
       ),
     );
   }
