@@ -7,12 +7,9 @@ import 'package:t3/models/http_exception.dart';
 import '../models/group_member.dart';
 import '../models/groups.dart';
 
-
-
-enum Mode {CloudMode, LocalMode}
+enum Mode { CloudMode, LocalMode }
 
 class MembersGroupsModel with ChangeNotifier {
-
   List<Group> _groups = [];
   List<GroupMember> _members = [];
 
@@ -20,8 +17,7 @@ class MembersGroupsModel with ChangeNotifier {
   final String userId;
   Mode mode;
 
-  MembersGroupsModel (this.authToken, this.userId, this._groups, this._members);
-
+  MembersGroupsModel(this.authToken, this.userId, this._groups, this._members);
 
   List<Group> get groups {
     return [..._groups];
@@ -92,7 +88,7 @@ class MembersGroupsModel with ChangeNotifier {
             memberId: memberId,
             memberName: memberData['memberName'],
             groupName: memberData['groupName'],
-            isAbsent: memberData['isAbsent']));
+            ));
       });
       _groups = loadedGroups;
       _members = loadedMembers;
@@ -104,7 +100,8 @@ class MembersGroupsModel with ChangeNotifier {
   }
 
   Future<void> addGroup(Group group) async {
-    final url = 'https://flutter-project-4ed4f.firebaseio.com/groups.json?auth=$authToken';
+    final url =
+        'https://flutter-project-4ed4f.firebaseio.com/groups.json?auth=$authToken';
 
     try {
       final response = await http.post(
@@ -122,7 +119,6 @@ class MembersGroupsModel with ChangeNotifier {
         groupId: json.decode(response.body)['name'],
         groupName: group.groupName,
         groupDescription: group.groupDescription,
-
       );
       _groups.add(newGroup);
       notifyListeners();
@@ -130,7 +126,6 @@ class MembersGroupsModel with ChangeNotifier {
       print(error);
       throw error;
     }
-
   }
 
   Future<void> updateGroup(String id, Group updatedGroup) async {
@@ -160,9 +155,9 @@ class MembersGroupsModel with ChangeNotifier {
     notifyListeners();
   }
 
-
   Future<void> deleteGroup(String id) async {
-    final url = 'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json?auth=$authToken';
+    final url =
+        'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json?auth=$authToken';
     var groupIndex = _groups.indexWhere((group) => group.groupId == id);
     var existingGroup = _groups[groupIndex];
     var name = _groups[groupIndex].groupName;
@@ -179,24 +174,24 @@ class MembersGroupsModel with ChangeNotifier {
       groupMembers.forEach((member) {
         removeMember(member.memberId);
       });
-    } else { notifyListeners();
-      return;}
+    } else {
+      notifyListeners();
+      return;
+    }
 
     // _members.removeWhere((member) => member.groupName == name);
     // notifyListeners();
-
   }
 
   void toggleAbsent(GroupMember member) {
-    
-    final memberIndex = members.indexOf(member);
-    members[memberIndex].toggleIsAbsent();
+    final memberIndex = _members.indexOf(member);
+    _members[memberIndex].toggleIsAbsent();
     notifyListeners();
   }
 
-
   Future<void> addMember(GroupMember member) async {
-    final url = 'https://flutter-project-4ed4f.firebaseio.com/members.json?auth=$authToken';
+    final url =
+        'https://flutter-project-4ed4f.firebaseio.com/members.json?auth=$authToken';
 
     try {
       final response = await http.post(
@@ -206,15 +201,17 @@ class MembersGroupsModel with ChangeNotifier {
             'memberName': member.memberName,
             'groupName': member.groupName,
             'creatorId': userId,
+            'isAbsent': member.isAbsent,
           },
         ),
       );
 
       final newMember = GroupMember(
-          memberId: json.decode(response.body)['name'],
-          memberName: member.memberName,
-          groupName: member.groupName,
-          isAbsent: member.isAbsent);
+        memberId: json.decode(response.body)['name'],
+        memberName: member.memberName,
+        groupName: member.groupName,
+        isAbsent: member.isAbsent,
+      );
       _members.insert(0, newMember);
       notifyListeners();
     } catch (error) {
@@ -222,8 +219,9 @@ class MembersGroupsModel with ChangeNotifier {
     }
   }
 
-    Future<void> removeMember(String id) async {
-    final url = 'https://flutter-project-4ed4f.firebaseio.com/members/$id.json?auth=$authToken';
+  Future<void> removeMember(String id) async {
+    final url =
+        'https://flutter-project-4ed4f.firebaseio.com/members/$id.json?auth=$authToken';
     final existingMemberIndex =
         _members.indexWhere((member) => member.memberId == id);
     var existingMember = _members[existingMemberIndex];
@@ -236,7 +234,8 @@ class MembersGroupsModel with ChangeNotifier {
       notifyListeners();
       throw HttpException('Could not delete member!');
     }
-    existingMember = null;} 
+    existingMember = null;
+  }
 
   Future<void> updateMember(String id, GroupMember updatedMember) async {
     final groupIndex = _members.indexWhere((member) => member.memberId == id);
@@ -259,8 +258,6 @@ class MembersGroupsModel with ChangeNotifier {
         print(error);
         throw error;
       }
-
-
-
-
-    }}}
+    }
+  }
+}

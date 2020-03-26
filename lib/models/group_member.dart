@@ -4,18 +4,19 @@ class GroupMember with ChangeNotifier {
   String memberId;
   String memberName;
   String groupName;
-  bool isAbsent = false;
+  bool isAbsent;
 
   GroupMember({
    @required this.memberId,
    @required this.memberName,
    @required this.groupName,
-    this.isAbsent,
+    this.isAbsent = false,
   });
 
 
 void toggleIsAbsent() {
   isAbsent =! isAbsent;
+  notifyListeners();
 }
 
 Map toJson() => {

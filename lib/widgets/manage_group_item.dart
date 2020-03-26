@@ -37,16 +37,15 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                   IconButton(
                     icon:
                         Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-                     onPressed: //widget.group.groupMembers.length > 0
-                    //     ? () {
-                    //         setState(
-                    //           () {
-                    //             _expanded = !_expanded;
-                    //           },
-                    //         );
-                    //       }
-                    //     : 
-                    null,
+                    onPressed: groupData.length > 0
+                        ? () {
+                            setState(
+                              () {
+                                _expanded = !_expanded;
+                              },
+                            );
+                          }
+                        : null,
                   ),
                   IconButton(
                       icon: Icon(Icons.person_add),
@@ -55,11 +54,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             title: Text('Add member'),
-
                             content: EditMembers(null, widget.group.groupName),
-
-                          
-
                           ),
                         );
                       }),
@@ -95,7 +90,6 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                                   listen: false)
                                               .deleteGroup(
                                                   widget.group.groupId);
-                                          
                                         } catch (error) {
                                           Scaffold.of(context).showSnackBar(
                                             SnackBar(
@@ -137,13 +131,12 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                 itemBuilder: (ctx, index) => Card(
                   child: ListTile(
                     dense: true,
-                    title: Text(widget.group.groupMembers[index].memberName),
+                    title: Text(groupData[index].memberName),
                     trailing: Container(
-                      width: 150,
+                      width: 200,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-
                           IconButton(
                               icon: Icon(Icons.edit),
                               onPressed: () {
@@ -209,58 +202,12 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                           ],
                                         ));
                               }),
-
-                          IconButton(icon: Icon(Icons.edit), onPressed: () {
-                            return showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: Text('Edit member'),
-                            content: EditMembers(widget.group.groupMembers[index].memberId, widget.group.groupId),
-                          ),
-                        );
-                          }),
-                          IconButton(
-                              icon: Icon(Icons.delete,
-                                  color: Theme.of(context).errorColor),
-                              onPressed: () { return showDialog(
-                            context: context,
-                            builder: (ctx) => AlertDialog(
-                                  title: Text('Confirm remove'),
-                                  content: Text(
-                                      'Are you sure you want to remove ${widget.group.groupMembers[index].memberName}?'),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                      onPressed: () {
-                                        Provider.of<MembersGroupsModel>(context,
-                                                listen: false)
-                                            .removeMember( widget.group.groupMembers[index].memberId);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.delete,
-                                            color: Theme.of(context).errorColor,
-                                          ),
-                                          Text('Delete')
-                                        ],
-                                      ),
-                                    ),
-                                    FlatButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('Cancel'),
-                                    )
-                                  ],
-                                ));}),
-
                         ],
                       ),
                     ),
                   ),
                 ),
-                itemCount: 20,
+                itemCount: groupData.length,
               ),
             ),
           ),

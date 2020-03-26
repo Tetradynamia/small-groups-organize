@@ -6,9 +6,9 @@ import '../models/members_groups_model.dart';
 
 class EditMembers extends StatefulWidget {
   final String memberId;
-  final String groupId;
+  final String groupName;
 
-  EditMembers(this.memberId, this.groupId);
+  EditMembers(this.memberId, this.groupName);
   @override
   _EditMembersState createState() => _EditMembersState();
 }
@@ -31,9 +31,7 @@ class _EditMembersState extends State<EditMembers> {
     if (_isInit) {
       if (widget.memberId != null) {
         _editedMember = Provider.of<MembersGroupsModel>(context, listen: false)
-            .groups
-            .firstWhere((group) => group.groupId == widget.groupId)
-            .groupMembers
+            .members
             .firstWhere((member) => member.memberId == widget.memberId);
 
         _initValues = {
@@ -58,14 +56,6 @@ class _EditMembersState extends State<EditMembers> {
     }
     _form.currentState.save();
 
-    if (widget.memberId != null) {
-      Provider.of<MembersGroupsModel>(context, listen: false)
-          .updateMember(_editedMember.memberId, _editedMember);
-    } else {
-      Provider.of<MembersGroupsModel>(context, listen: false)
-          .addMember(_editedMember);
-      print(widget.groupId);
-    }
 
     setState(() {
       _isLoading = true;
@@ -131,7 +121,7 @@ class _EditMembersState extends State<EditMembers> {
                         _editedMember = GroupMember(
                             memberId: _editedMember.memberId,
                             memberName: value,
-                            groupName: _editedMember.groupName);
+                            groupName: widget.groupName);
                       },
                     ),
                     Row(

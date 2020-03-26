@@ -25,7 +25,6 @@ class GroupsGrid extends StatelessWidget {
           groups[index].groupId,
           groups[index].groupName,
           groups[index].groupDescription,
-          groups[index].groupMembers,
         ),
       ),
     );
