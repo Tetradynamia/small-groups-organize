@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t3/models/auth.dart';
 import 'package:t3/models/history.dart';
+import 'package:t3/screens/a_sceen.dart';
+import 'package:t3/screens/group_overview.dart';
 import 'package:t3/screens/manage_groups_screen.dart';
+import 'package:t3/screens/mode_screen.dart';
 
 import './models/members_groups_model.dart';
 import './screens/tabs_screen.dart';
-import './screens/group_overview.dart';
 import './screens/auth_screen.dart';
-import './screens/splash_screen.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: Auth()),
         ChangeNotifierProxyProvider<Auth, MembersGroupsModel>(
-          create: (ctx) => MembersGroupsModel(null, null, [], []),
+          create: (ctx) => MembersGroupsModel(null, null, [], [],),
           update: (ctx, auth, previousMGM) => MembersGroupsModel(
               auth.token,
               auth.userId,
@@ -40,20 +42,22 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          home: auth.isAuth
-              ? GroupOverview()
-              : FutureBuilder(
-                  future: auth.tryAutoLogin(),
-                  builder: (ctx, authResultSnapshot) =>
-                      authResultSnapshot.connectionState ==
-                              ConnectionState.waiting
-                          ? SplashScreen()
-                          : AuthScreen(),
-                ),
+           home: ModeScreen(), // auth.isAuth
+          //     ? GroupOverview()
+          //     : FutureBuilder(
+          //         future: auth.tryAutoLogin(),
+          //         builder: (ctx, authResultSnapshot) =>
+          //             authResultSnapshot.connectionState ==
+          //                     ConnectionState.waiting
+          //                 ? SplashScreen()
+          //                 : AuthScreen(),
+            //    ),
           routes: {
             TabsScreen.routeName: (ctx) => TabsScreen(),
             ManageGroupsScreen.routeName: (ctx) => ManageGroupsScreen(),
             AuthScreen.routeName: (ctx) => AuthScreen(),
+            GroupOverview.routeName: (ctx) => GroupOverview(),
+            AScreen.routeName: (ctx) => AScreen(),
           },
         ),
       ),

@@ -18,7 +18,7 @@ class GroupOverview extends StatelessWidget {
       ),
       body: FutureBuilder(
           future: Provider.of<MembersGroupsModel>(context, listen: false)
-              .fetchAndSetGroupsMembers(),
+              .getAllGroups(),
           builder: (ctx, dataSnapshot) {
             if (dataSnapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());

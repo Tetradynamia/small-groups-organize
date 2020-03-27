@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class GroupMember with ChangeNotifier {
-  String memberId;
-  String memberName;
-  String groupName;
+  final String memberId;
+  final String memberName;
+  final String groupName;
   bool isAbsent;
 
   GroupMember({

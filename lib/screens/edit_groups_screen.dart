@@ -92,22 +92,22 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
     } else {
       try {
         await Provider.of<MembersGroupsModel>(context, listen: false)
-            .addGroup(_editedGroup);
+            .insertGroup(Group(groupId: DateTime.now().toIso8601String(), groupName: _editedGroup.groupName, groupDescription: _editedGroup.groupDescription));
       } catch (error) {
-        await showDialog<Null>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('An error occured!'),
-            content: Text('Something went wrong!'),
-            actions: [
-              FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Okay'))
-            ],
-          ),
-        );
+        // await showDialog<Null>(
+        //   context: context,
+        //   builder: (ctx) => AlertDialog(
+        //     title: Text('An error occured!'),
+        //     content: Text('Something went wrong!'),
+        //     actions: [
+        //       FlatButton(
+        //           onPressed: () {
+        //             Navigator.of(context).pop();
+        //           },
+        //           child: const Text('Okay'))
+        //     ],
+        //   ),
+        // );
       } // finally {
       //   setState(() {
       //     _isLoading = false;

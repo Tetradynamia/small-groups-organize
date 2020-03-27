@@ -27,7 +27,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
       children: <Widget>[
         Card(
           child: ListTile(
-            leading: CircleAvatar(child: Text('0')),
+            leading: CircleAvatar(child: Text('${groupData.length}')),
             title: Text('${widget.group.groupName}'),
             subtitle: Text(widget.group.groupDescription),
             trailing: Container(

@@ -2,16 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:t3/screens/group_overview.dart';
 
-import '../models/auth.dart';
-import '../models/http_exception.dart';
-import '../screens/auth_screen.dart';
+
 import '../screens/a_sceen.dart';
 import '../models/members_groups_model.dart';
 
-enum Mode {LocalMode, CloudMode}
+// enum Mode {LocalMode, CloudMode}
 
 class ModeScreen extends StatelessWidget {
   static const routeName = '/mode';

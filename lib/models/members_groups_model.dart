@@ -7,6 +7,10 @@ import 'package:t3/models/http_exception.dart';
 import '../models/group_member.dart';
 import '../models/groups.dart';
 
+import 'package:sembast/sembast.dart';
+
+import '../models/app_database.dart';
+
 enum Mode { CloudMode, LocalMode }
 
 class MembersGroupsModel with ChangeNotifier {
@@ -15,9 +19,13 @@ class MembersGroupsModel with ChangeNotifier {
 
   final String authToken;
   final String userId;
-  Mode mode;
+  Mode _mode;
 
   MembersGroupsModel(this.authToken, this.userId, this._groups, this._members);
+
+  Mode get mode {
+    return _mode;
+  }
 
   List<Group> get groups {
     return [..._groups];
@@ -44,7 +52,7 @@ class MembersGroupsModel with ChangeNotifier {
   }
 
   void switchMode(value) {
-    mode = value;
+    _mode = value;
   }
 
   Future<void> fetchAndSetGroupsMembers() async {
@@ -85,10 +93,10 @@ class MembersGroupsModel with ChangeNotifier {
 
       extractedMembersData.forEach((memberId, memberData) {
         loadedMembers.add(GroupMember(
-            memberId: memberId,
-            memberName: memberData['memberName'],
-            groupName: memberData['groupName'],
-            ));
+          memberId: memberId,
+          memberName: memberData['memberName'],
+          groupName: memberData['groupName'],
+        ));
       });
       _groups = loadedGroups;
       _members = loadedMembers;
@@ -259,5 +267,32 @@ class MembersGroupsModel with ChangeNotifier {
         throw error;
       }
     }
+  }
+
+  static const String folderName = "Students";
+  final _groupFolder = intMapStoreFactory.store(folderName);
+
+  Future<Database> get _db async => await AppDatabase.instance.database;
+
+  Future insertGroup(Group student) async {
+    await _groupFolder.add(
+      await _db, 
+      {
+        'groupName': student.groupName,
+        'groupDescription': student.groupDescription,
+        'groupId': student.groupId,
+      },
+    );
+    print('Student Inserted successfully !!');
+  }
+
+  Future<void> getAllGroups() async {
+     List<Group> loadedG = [];
+    final recordSnapshot = await _groupFolder.find(await _db);
+     loadedG = recordSnapshot.map((snapshot){
+        final group = Group.fromJson(snapshot.value);
+      return group;
+    }).toList();
+    _groups = loadedG;
   }
 }
