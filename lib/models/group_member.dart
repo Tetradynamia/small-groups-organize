@@ -23,6 +23,13 @@ Map toJson() => {
   'memberId': memberId,
   'memberName': memberName,
   'groupName': groupName,
+  'isAbsent': isAbsent
 };
 
+
+GroupMember.fromJson(Map<String, dynamic> json)
+      : memberId = json['memberId'],
+        memberName = json['memberName'],
+        groupName = json['groupName'],
+        isAbsent = json['isAbsent'];
 }

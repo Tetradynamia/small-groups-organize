@@ -345,7 +345,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                         ModalRoute.of(context)
                                             .settings
                                             .arguments,
-                                        note);
+                                        'note');
                                 setState(() {
                                   _isLoading = false;
                                 });

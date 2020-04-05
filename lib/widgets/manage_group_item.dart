@@ -61,6 +61,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                   IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
+                        print(widget.group.groupName);
                         return showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(
@@ -89,7 +90,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                                   context,
                                                   listen: false)
                                               .deleteGroup(
-                                                  widget.group.groupId);
+                                                  widget.group.groupId, widget.group);
                                         } catch (error) {
                                           Scaffold.of(context).showSnackBar(
                                             SnackBar(

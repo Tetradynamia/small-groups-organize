@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t3/models/members_groups_model.dart';
 
 import '../models/auth.dart';
 import '../models/http_exception.dart';
@@ -123,6 +124,7 @@ class _AuthCardState extends State<AuthCard> {
       // Invalid!
       return;
     }
+
     _formKey.currentState.save();
     setState(() {
       _isLoading = true;
@@ -195,6 +197,16 @@ class _AuthCardState extends State<AuthCard> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
+                Row(mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    FlatButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: Icon(Icons.arrow_back),
+                        label: Text('Back'))
+                  ],
+                ),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'E-Mail'),
                   keyboardType: TextInputType.emailAddress,
@@ -242,7 +254,11 @@ class _AuthCardState extends State<AuthCard> {
                   RaisedButton(
                     child:
                         Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
-                    onPressed: _submit,
+                    onPressed: () {
+                      Provider.of<MembersGroupsModel>(context, listen: false)
+                          .switchMode(Mode.CloudMode);
+                      _submit();
+                    },
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),

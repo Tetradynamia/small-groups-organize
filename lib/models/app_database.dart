@@ -1,42 +1,55 @@
 import 'dart:async';
 
-import 'package:path_provider/path_provider.dart' as syspaths;
-import 'package:sembast/sembast.dart';
-import 'package:sembast/sembast_io.dart';
 import 'package:path/path.dart' as path;
+import 'package:sqflite/sqflite.dart' as sql;
 
 class AppDatabase {
-  static final AppDatabase _singleton = AppDatabase._();
-
-  static AppDatabase get instance => _singleton;
-
-  Completer<Database> _dbOpenCompleter;
-
-  AppDatabase._();
-
- Future<Database> get database async {
-    // If completer is null, AppDatabaseClass is newly instantiated, so database is not yet opened
-    if (_dbOpenCompleter == null) {
-      _dbOpenCompleter = Completer();
-      // Calling _openDatabase will also complete the completer with database instance
-      _openDatabase();
-    }
-    // If the database is already opened, awaiting the future will happen instantly.
-    // Otherwise, awaiting the returned future will take some time - until complete() is called
-    // on the Completer in _openDatabase() below.
-    return _dbOpenCompleter.future;
+  static void _createDb(sql.Database db) {
+    db.execute(
+        'CREATE TABLE groups (groupId TEXT PRIMARY KEY, groupName TEXT, groupDescription TEXT)');
+    db.execute(
+        'CREATE TABLE members (memberId TEXT PRIMARY KEY, memberName TEXT, groupName TEXT)');
+        db.execute(
+        'CREATE TABLE history (id INTEGER PRIMARY KEY AUTOINCREMENT, dateTime TEXT, groupName TEXT, smallGroups TEXT, note TEXT)');
   }
 
-    Future _openDatabase() async {
-    // Get a platform-specific directory where persistent app data can be stored
-    final appDocumentDir = await syspaths.getApplicationDocumentsDirectory();
-    // Path with the form: /platform-specific-directory/demo.db
-    final dbPath = path.join(appDocumentDir.path, 'StudentsDB.db');
+  static Future<sql.Database> database() async {
+    final dbPath = await sql.getDatabasesPath();
+    return sql.openDatabase(path.join(dbPath, 'database.db'),
+        onCreate: (db, version) {
+      return _createDb(db);
+    }, version: 1);
+  }
 
-    final database = await databaseFactoryIo.openDatabase(dbPath);
+  static Future<void> insert(String table, Map<String, Object> data) async {
+    final db = await AppDatabase.database();
+    db.insert(
+      table,
+      data,
+      conflictAlgorithm: sql.ConflictAlgorithm.replace,
+    );
+  }
+
+  static Future<List<Map<String, dynamic>>> getData(String table) async {
+    final db = await AppDatabase.database();
+    return db.query(table);
+  }
+
+    static Future<int> delete(String table, String where, String id) async {
+      final db = await AppDatabase.database();
+    return await db.delete('$table', where: '$where = ?', whereArgs: [id]);
+  }
 
 
-    // Any code awaiting the Completer's future will now start executing
-    _dbOpenCompleter.complete(database);
+  static Future<void> updateGoup(String id, Map<String, Object> data) async {
+    final db = await AppDatabase.database();
+    return await db.update('groups', data,
+        where: 'groupId = ?', whereArgs: [id]);
+  }
+
+   static Future<void> updateMember(String id, Map<String, Object> data) async {
+    final db = await AppDatabase.database();
+    return await db.update('members', data,
+        where: 'memberId = ?', whereArgs: [id]);
   }
 }

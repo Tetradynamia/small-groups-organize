@@ -124,8 +124,9 @@ class ModeCard extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            RaisedButton(
-              onPressed: () { Provider.of<MembersGroupsModel>(context, listen: false).switchMode(Mode.CloudMode);
+             RaisedButton(
+              onPressed: () {
+                Provider.of<MembersGroupsModel>(context, listen: false).switchMode(Mode.CloudMode);
                 Navigator.of(context)
                     .pushReplacementNamed(AScreen.routeName);},
               child: Text('Cloud Mode'),

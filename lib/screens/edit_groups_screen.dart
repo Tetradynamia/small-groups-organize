@@ -38,10 +38,14 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
         _editedGroup = Provider.of<MembersGroupsModel>(context, listen: false)
             .findGroupById(widget.groupId);
 
+
         _initValues = {
           'name': _editedGroup.groupName,
           'description': _editedGroup.groupDescription,
         };
+
+        _oldName = _editedGroup.groupName;
+        print(_oldName);
       }
     }
 
@@ -73,7 +77,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
         List _helperList = [];
         Provider.of<MembersGroupsModel>(context, listen: false)
             .members
-            .where((member) => member.groupName == _oldName)
+            .where((member) => member.groupName == _oldName).toList()
             .forEach((member) => _helperList.add(member.memberId));
         print(_helperList);
         _helperList.forEach((id) async {
@@ -91,23 +95,28 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
       }
     } else {
       try {
-        await Provider.of<MembersGroupsModel>(context, listen: false)
-            .insertGroup(Group(groupId: DateTime.now().toIso8601String(), groupName: _editedGroup.groupName, groupDescription: _editedGroup.groupDescription));
+        await Provider.of<MembersGroupsModel>(context, listen: false).addGroup(
+          Group(
+            groupId: _editedGroup.groupId,
+            groupName: _editedGroup.groupName,
+            groupDescription: _editedGroup.groupDescription,
+          ),
+        );
       } catch (error) {
-        // await showDialog<Null>(
-        //   context: context,
-        //   builder: (ctx) => AlertDialog(
-        //     title: Text('An error occured!'),
-        //     content: Text('Something went wrong!'),
-        //     actions: [
-        //       FlatButton(
-        //           onPressed: () {
-        //             Navigator.of(context).pop();
-        //           },
-        //           child: const Text('Okay'))
-        //     ],
-        //   ),
-        // );
+        await showDialog<Null>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error occured!'),
+            content: Text('Something went wrong!'),
+            actions: [
+              FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Okay'))
+            ],
+          ),
+        );
       } // finally {
       //   setState(() {
       //     _isLoading = false;

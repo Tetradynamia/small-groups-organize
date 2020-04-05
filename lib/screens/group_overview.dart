@@ -3,24 +3,25 @@ import 'package:t3/widgets/drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:t3/widgets/start.dart';
 
-
 import '../widgets/groups_grid.dart';
 import '../screens/manage_groups_screen.dart';
 import '../models/members_groups_model.dart';
 
 class GroupOverview extends StatelessWidget {
-  static const routeName ='/groups-overview';
+  static const routeName = '/groups-overview';
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+     print('building shit');
+    return  Scaffold(
       appBar: AppBar(
         title: Text('Your Groups'),
       ),
       body: FutureBuilder(
           future: Provider.of<MembersGroupsModel>(context, listen: false)
-              .getAllGroups(),
+              .fetchAndSetGroupsMembers(),
           builder: (ctx, dataSnapshot) {
-            if (dataSnapshot.connectionState == ConnectionState.waiting) {
+            if (
+                dataSnapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator());
             } else if (dataSnapshot.error != null) {
               return Center(child: Text('An error occured!'));
