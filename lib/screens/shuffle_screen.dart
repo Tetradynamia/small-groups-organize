@@ -30,7 +30,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     final id = ModalRoute.of(context).settings.arguments;
 
    
-    _availableMembers = Provider.of<MembersGroupsModel>(context, listen: false)
+    _availableMembers = Provider.of<MembersGroupsModel>(context,listen: false)
         .members
         .where((member) => member.groupName == id)
         .toList()
@@ -165,6 +165,8 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
 
   @override
   Widget build(BuildContext context) {
+     print(Provider.of<MembersGroupsModel>(context, listen: false).availableMembers.length);
+            
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Padding(

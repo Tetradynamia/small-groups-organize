@@ -25,7 +25,7 @@ class HistoryItem {
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
-        'dateTime': dateTime,
+        'dateTime': dateTime.toIso8601String(),
         'groupName': groupName,
         'note': note,
         'subGroups': subGroups
@@ -36,13 +36,21 @@ class HistoryItem {
   static HistoryItem fromMap(Map<String, dynamic> map) {
     return HistoryItem(
       id: map['id'],
-      dateTime: map['dateTime'],
+      dateTime: DateTime.parse(map['dateTime']),
       groupName: map['groupName'],
-      subGroups: map['subGroups']
-          .map((mapping) =>
-              mapping.map((i) => GroupMember.fromJson(mapping)).toList())
-          .toList()
-          .cast<GroupMember>(),
+       subGroups: (map['subGroups'] as List<dynamic>)
+            .map((subGroup) => ((subGroup) as List<dynamic>)
+                .map(
+                  (member) => GroupMember(
+                    memberName: member['memberName'],
+                    memberId: member['memberId'],
+                    groupName: member['groupName'],
+                    isAbsent: member['isAbsent'],
+                  ),
+                )
+                .toList())
+            .toList()
+          .toList(),
     );
   }
 }
@@ -87,11 +95,14 @@ class History with ChangeNotifier {
         note: historyData['note'],
         subGroups: (historyData['subGroups'] as List<dynamic>)
             .map((subGroup) => ((subGroup) as List<dynamic>)
-                .map((member) => GroupMember(
-                      memberName: member['memberName'],
-                      memberId: member['memberId'],
-                      groupName: member['groupName'],
-                    ))
+                .map(
+                  (member) => GroupMember(
+                    memberName: member['memberName'],
+                    memberId: member['memberId'],
+                    groupName: member['groupName'],
+                    isAbsent: member['isAbsent'],
+                  ),
+                )
                 .toList())
             .toList(),
       ));
@@ -130,15 +141,15 @@ class History with ChangeNotifier {
       ),
     );
 
-    await  _historyFolder.add(await _db, {
-        'id': id,
-        'dateTime': timeStamp.toIso8601String(),
-        'groupName': groupName,
-        'note': note,
-        'subGroups': subGroups
-            .map((subGroup) => subGroup.map((gm) => gm.toJson()).toList())
-            .toList()
-      } );
+    await _historyFolder.add(await _db, {
+      'id': id,
+      'dateTime': timeStamp.toIso8601String(),
+      'groupName': groupName,
+      'note': note,
+      'subGroups': subGroups
+          .map((subGroup) => subGroup.map((gm) => gm.toJson()).toList())
+          .toList()
+    });
     print('Student Inserted successfully !!');
     notifyListeners();
   }
@@ -183,35 +194,36 @@ class History with ChangeNotifier {
   }
 
   Future<void> getHistory() async {
-  //   final loadedHistory = await AppDatabase.getData('history');
+    //   final loadedHistory = await AppDatabase.getData('history');
 
-  //   print(loadedHistory);
+    //   print(loadedHistory);
 
-  //   _history = loadedHistory
-  //       .map((item) => HistoryItem(
-  //             id: item['id'],
-  //             subGroups: (item['smallGroups']['subGroups'] as List<dynamic>)
-  //                 .map((subGroup) => ((subGroup) as List<dynamic>)
-  //                     .map((member) => GroupMember(
-  //                           memberName: member['memberName'],
-  //                           memberId: member['memberId'],
-  //                           groupName: member['groupName'],
-  //                         ))
-  //                     .toList())
-  //                 .toList(),
-  //             dateTime: DateTime.parse(item['dateTime']),
-  //             groupName: item['groupName'],
-  //           ))
-  //       .toList();
+    //   _history = loadedHistory
+    //       .map((item) => HistoryItem(
+    //             id: item['id'],
+    //             subGroups: (item['smallGroups']['subGroups'] as List<dynamic>)
+    //                 .map((subGroup) => ((subGroup) as List<dynamic>)
+    //                     .map((member) => GroupMember(
+    //                           memberName: member['memberName'],
+    //                           memberId: member['memberId'],
+    //                           groupName: member['groupName'],
+    //                         ))
+    //                     .toList())
+    //                 .toList(),
+    //             dateTime: DateTime.parse(item['dateTime']),
+    //             groupName: item['groupName'],
+    //           ))
+    //       .toList();
 
     final recordSnapshot = await _historyFolder.find(await _db);
-     List <HistoryItem> loadedH;
-    loadedH = recordSnapshot.map((snapshot){
-      final historyEntry = HistoryItem.fromMap(snapshot.value);
+    List<HistoryItem> loadedH;
+    loadedH = recordSnapshot.map((snapshot) {
       print(snapshot.value);
+      final historyEntry = HistoryItem.fromMap(snapshot.value);
+      print(historyEntry);
       return historyEntry;
     }).toList();
-_history = loadedH;
-print(_history);
-   }
+    _history = loadedH;
+    print(_history);
+  }
 }

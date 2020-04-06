@@ -16,6 +16,11 @@ class GroupScreen extends StatelessWidget {
     final thisGroupAvailableMembers =
         thisGroupMembers.where((member) => member.isAbsent == false).toList();
 
+    final avail = Provider.of<MembersGroupsModel>(context)
+        .availableMembers
+        .where((member) => member.groupName == gName)
+        .toList();
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -29,7 +34,7 @@ class GroupScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                        '${thisGroupAvailableMembers.length} / ${thisGroupMembers.length} members present'),
+                        '${avail.length} / ${thisGroupMembers.length} members present'),
                   ],
                 )),
               ),
@@ -47,9 +52,7 @@ class GroupScreen extends StatelessWidget {
               itemCount: thisGroupMembers.length,
               itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
                 value: thisGroupMembers[index],
-                child: MemberItem(
-                  member: thisGroupMembers[index],
-                ),
+                child: MemberItem(),
               ),
             ),
           ),

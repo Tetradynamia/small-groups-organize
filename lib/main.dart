@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t3/models/auth.dart';
+import 'package:t3/models/group_member.dart';
 import 'package:t3/models/history.dart';
 import 'package:t3/screens/a_sceen.dart';
 import 'package:t3/screens/group_overview.dart';

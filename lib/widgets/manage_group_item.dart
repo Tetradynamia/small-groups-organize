@@ -140,7 +140,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                         children: [
                           IconButton(
                               icon: Icon(Icons.edit),
-                              onPressed: () {
+                              onPressed: () {print(groupData[index].memberId);
                                 return showDialog(
                                   context: context,
                                   builder: (ctx) => AlertDialog(

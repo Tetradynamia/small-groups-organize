@@ -82,25 +82,33 @@ class MembersGroupsModel with ChangeNotifier {
           //     .toList();
           // notifyListeners();
 
-           final groupRecordSnapshot = await _groupFolder.find(await _db);
-   List <Group> loadedG = [];
-    
-    loadedG = groupRecordSnapshot.map((snapshot){
-        final group = Group.fromJson(snapshot.value);
-        print(snapshot.value);
-      return group;
-    }).toList();
-    print(loadedG);
-    _groups = loadedG;
+          final groupRecordSnapshot = await _groupFolder.find(await _db);
+          List<Group> loadedG = [];
 
-    final memberRecordSnapshot = await _memberFolder.find(await _db);
-   List <GroupMember> loadedM = [];
-    
-    loadedM = memberRecordSnapshot.map((snapshot){
-        final student = GroupMember.fromJson(snapshot.value);
-      return student;
-    }).toList();
-    _members = loadedM;
+          loadedG = groupRecordSnapshot.map((snapshot) {
+            final group = Group.fromJson(snapshot.value);
+            print(snapshot.value);
+            return group;
+          }).toList();
+
+          _groups = loadedG;
+
+          final memberRecordSnapshot = await _memberFolder.find(await _db);
+          List<GroupMember> loadedM = [];
+
+          final extracted = memberRecordSnapshot.map((snapshot) {
+            final student = GroupMember.fromJson(snapshot.value);
+            return student;
+          }).toList();
+          extracted.forEach((member) {
+            loadedM.add(GroupMember(
+              memberId: member.memberId,
+              groupName: member.groupName,
+              memberName: member.memberName,
+              isAbsent: false,
+            ));
+          });
+          _members = loadedM;
         }
         break;
       case Mode.CloudMode:
@@ -161,8 +169,6 @@ class MembersGroupsModel with ChangeNotifier {
 
   Future<void> addGroup(Group group) async {
     if (_mode == Mode.LocalMode) {
-
-
       final newGroup = Group(
         groupId: UniqueKey().toString(),
         groupName: group.groupName,
@@ -173,7 +179,6 @@ class MembersGroupsModel with ChangeNotifier {
         'groupId': newGroup.groupId,
         'groupDescription': group.groupDescription,
         'groupName': group.groupName,
-        
       });
       print('Student Inserted successfully !!');
 
@@ -220,10 +225,13 @@ class MembersGroupsModel with ChangeNotifier {
         // });
 
         final finder = Finder(filter: Filter.equals('groupId', id));
-    await _groupFolder.update(await _db, {
-        'groupDescription': updatedGroup.groupDescription,
-        'groupName': updatedGroup.groupName,
-      },finder: finder);
+        await _groupFolder.update(
+            await _db,
+            {
+              'groupDescription': updatedGroup.groupDescription,
+              'groupName': updatedGroup.groupName,
+            },
+            finder: finder);
         _groups[groupIndex] = updatedGroup;
         notifyListeners();
       } else {
@@ -264,10 +272,9 @@ class MembersGroupsModel with ChangeNotifier {
       //   });
 
       final finder = Finder(filter: Filter.equals('groupId', id));
-    await _groupFolder.delete(await _db, finder: finder);
-        _groups.removeAt(groupIndex);
-        notifyListeners();
-      
+      await _groupFolder.delete(await _db, finder: finder);
+      _groups.removeAt(groupIndex);
+      notifyListeners();
     } else {
       final url =
           'https://flutter-project-4ed4f.firebaseio.com/groups/$id.json?auth=$authToken';
@@ -297,9 +304,14 @@ class MembersGroupsModel with ChangeNotifier {
     // notifyListeners();
   }
 
-  void toggleAbsent(GroupMember member) {
-    final memberIndex = _members.indexOf(member);
-    _members[memberIndex].toggleIsAbsent();
+  void toggleAbsent(String id, GroupMember member) {
+    final taskIndex = _members.indexWhere((member) => member.memberId == id);
+    if (taskIndex >= 0) {
+      _members[taskIndex].toggleIsAbsent();
+    } else {
+      print(taskIndex);
+      print(id);
+    }
     notifyListeners();
   }
 
@@ -309,7 +321,7 @@ class MembersGroupsModel with ChangeNotifier {
         memberId: UniqueKey().toString(),
         memberName: member.memberName,
         groupName: member.groupName,
-        isAbsent: false,
+        isAbsent: member.isAbsent,
       );
 
       // AppDatabase.insert('members', {
@@ -318,11 +330,10 @@ class MembersGroupsModel with ChangeNotifier {
       //   'memberName': newMember.memberName,
       // });
 
-       await _memberFolder.add(await _db, {
-        'groupId': newMember.memberId,
+      await _memberFolder.add(await _db, {
+        'memberId': newMember.memberId,
         'memberName': newMember.memberName,
         'groupName': newMember.groupName,
-        'isAbsent': newMember.isAbsent,
       });
 
       _members.insert(0, newMember);
@@ -339,7 +350,6 @@ class MembersGroupsModel with ChangeNotifier {
               'memberName': member.memberName,
               'groupName': member.groupName,
               'creatorId': userId,
-              'isAbsent': member.isAbsent,
             },
           ),
         );
@@ -348,7 +358,6 @@ class MembersGroupsModel with ChangeNotifier {
           memberId: json.decode(response.body)['name'],
           memberName: member.memberName,
           groupName: member.groupName,
-          isAbsent: member.isAbsent,
         );
         _members.insert(0, newMember);
         notifyListeners();
@@ -422,7 +431,7 @@ class MembersGroupsModel with ChangeNotifier {
   static const String groupFolder = "Groups";
   final _groupFolder = intMapStoreFactory.store(groupFolder);
 
-   static const String memberFolder = "Members";
+  static const String memberFolder = "Members";
   final _memberFolder = intMapStoreFactory.store(memberFolder);
 
   Future<Database> get _db async => await SDatabase.instance.database;

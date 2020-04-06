@@ -7,29 +7,32 @@ class GroupMember with ChangeNotifier {
   bool isAbsent;
 
   GroupMember({
-   @required this.memberId,
-   @required this.memberName,
-   @required this.groupName,
+    @required this.memberId,
+    @required this.memberName,
+    @required this.groupName,
     this.isAbsent = false,
   });
 
+  void toggleIsAbsent() {
+    isAbsent = !isAbsent;
 
-void toggleIsAbsent() {
-  isAbsent =! isAbsent;
-  notifyListeners();
-}
+    notifyListeners();
 
-Map toJson() => {
-  'memberId': memberId,
-  'memberName': memberName,
-  'groupName': groupName,
-  'isAbsent': isAbsent
-};
+    
+  }
 
+  Map toJson() => {
+        'memberId': memberId,
+        'memberName': memberName,
+        'groupName': groupName,
+        'isAbsent': isAbsent,
+      };
 
-GroupMember.fromJson(Map<String, dynamic> json)
+  GroupMember.fromJson(Map<String, dynamic> json)
       : memberId = json['memberId'],
         memberName = json['memberName'],
-        groupName = json['groupName'],
-        isAbsent = json['isAbsent'];
+        groupName = json['groupName'];
+
+     
+  
 }
