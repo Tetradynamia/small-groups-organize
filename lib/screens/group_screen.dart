@@ -3,20 +3,25 @@ import 'package:provider/provider.dart';
 import 'package:t3/widgets/member_item.dart';
 
 import '../models/members_groups_model.dart';
+import '../models/group_member.dart';
 
-class GroupScreen extends StatelessWidget {
+class GroupScreen extends StatefulWidget {
+  @override
+  _GroupScreenState createState() => _GroupScreenState();
+}
+
+class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     final gName = ModalRoute.of(context).settings.arguments;
 
-    final thisGroupMembers = Provider.of<MembersGroupsModel>(context)
-        .members
-        .where((member) => member.groupName == gName)
-        .toList();
-    final thisGroupAvailableMembers =
-        thisGroupMembers.where((member) => member.isAbsent == false).toList();
+    final thisGroupMembers =
+        Provider.of<MembersGroupsModel>(context, listen: false)
+            .members
+            .where((member) => member.groupName == gName)
+            .toList();
 
-    final avail = Provider.of<MembersGroupsModel>(context)
+    final availableMembers = Provider.of<MembersGroupsModel>(context)
         .availableMembers
         .where((member) => member.groupName == gName)
         .toList();
@@ -34,7 +39,7 @@ class GroupScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                        '${avail.length} / ${thisGroupMembers.length} members present'),
+                        '${availableMembers.length} / ${thisGroupMembers.length} members present'),
                   ],
                 )),
               ),
@@ -52,7 +57,37 @@ class GroupScreen extends StatelessWidget {
               itemCount: thisGroupMembers.length,
               itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
                 value: thisGroupMembers[index],
-                child: MemberItem(),
+                child: Card(
+                  child: Consumer<GroupMember>(
+                    builder: (ctx, member, _) => ListTile(
+                      leading: Checkbox(
+                        value: member.isAbsent,
+                        onChanged: (bool checked) {
+                          setState(() {
+                            member.toggleIsAbsent();
+                          });
+                          
+                          if (member.isAbsent) {
+                            Scaffold.of(context).hideCurrentSnackBar();
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                '${member.memberName} was marked as absent',
+                                textAlign: TextAlign.center,
+                              ),
+                              duration: Duration(seconds: 1),
+                            ));
+                          }
+                        },
+                      ),
+                      title: Text(
+                        member.memberName,
+                        style: TextStyle(
+                            color:
+                                member.isAbsent ? Colors.grey : Colors.black),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

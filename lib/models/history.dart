@@ -1,9 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:t3/models/group_member.dart';
-import '../models/http_exception.dart';
 import '../models/app_database.dart';
 import 'package:sembast/sembast.dart';
 import '../models/sembast_database.dart';
@@ -56,10 +54,8 @@ class HistoryItem {
 }
 
 class History with ChangeNotifier {
-  final String authToken;
-  final String userId;
 
-  History(this.authToken, this.userId, this._history);
+  
 
   List<HistoryItem> _history = [];
 
@@ -76,40 +72,6 @@ class History with ChangeNotifier {
 
   Future<Database> get _db async => await SDatabase.instance.database;
 
-  Future<void> fetchAndSetHistory() async {
-    final url =
-        'https://flutter-project-4ed4f.firebaseio.com/history/$userId.json?auth=$authToken';
-
-    final response = await http.get(url);
-    final List<HistoryItem> loadedHistory = [];
-    final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
-    if (extractedData == null) {
-      return;
-    }
-
-    extractedData.forEach((id, historyData) {
-      loadedHistory.add(HistoryItem(
-        id: id,
-        dateTime: DateTime.parse(historyData['dateTime']),
-        groupName: historyData['groupName'],
-        note: historyData['note'],
-        subGroups: (historyData['subGroups'] as List<dynamic>)
-            .map((subGroup) => ((subGroup) as List<dynamic>)
-                .map(
-                  (member) => GroupMember(
-                    memberName: member['memberName'],
-                    memberId: member['memberId'],
-                    groupName: member['groupName'],
-                    isAbsent: member['isAbsent'],
-                  ),
-                )
-                .toList())
-            .toList(),
-      ));
-    });
-    _history = loadedHistory;
-    notifyListeners();
-  }
 
   Future<void> addToHistory(
     String id,
@@ -155,22 +117,7 @@ class History with ChangeNotifier {
   }
 
   Future<void> removeFromHistory(String id) async {
-    final url =
-        'https://flutter-project-4ed4f.firebaseio.com/history/$id?auth=$authToken';
 
-    var existingIndex = _history.indexWhere((entry) => entry.id == id);
-    var existingHistory = _history[existingIndex];
-    _history.remove(id);
-    notifyListeners();
-
-    final response = await http.delete(url);
-    if (response.statusCode >= 400) {
-      _history.insert(existingIndex, existingHistory);
-      notifyListeners();
-      throw HttpException('Could not delete member!');
-    }
-    existingHistory = null;
-    notifyListeners();
   }
 
   Future<void> insertHistory(
@@ -194,26 +141,6 @@ class History with ChangeNotifier {
   }
 
   Future<void> getHistory() async {
-    //   final loadedHistory = await AppDatabase.getData('history');
-
-    //   print(loadedHistory);
-
-    //   _history = loadedHistory
-    //       .map((item) => HistoryItem(
-    //             id: item['id'],
-    //             subGroups: (item['smallGroups']['subGroups'] as List<dynamic>)
-    //                 .map((subGroup) => ((subGroup) as List<dynamic>)
-    //                     .map((member) => GroupMember(
-    //                           memberName: member['memberName'],
-    //                           memberId: member['memberId'],
-    //                           groupName: member['groupName'],
-    //                         ))
-    //                     .toList())
-    //                 .toList(),
-    //             dateTime: DateTime.parse(item['dateTime']),
-    //             groupName: item['groupName'],
-    //           ))
-    //       .toList();
 
     final recordSnapshot = await _historyFolder.find(await _db);
     List<HistoryItem> loadedH;

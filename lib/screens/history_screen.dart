@@ -39,7 +39,7 @@ class HistoryScreen extends StatelessWidget {
                                 .reversed
                                 .toList()[index],
                           ),
-                      itemCount: history.history.length),
+                      itemCount: 3),
                 )),
               ],
             );
