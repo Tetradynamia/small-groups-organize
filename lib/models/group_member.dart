@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/group_member.dart';
+
 
 class GroupMember with ChangeNotifier {
   final String memberId;

@@ -1,8 +1,9 @@
-import 'dart:convert';
+
 
 import 'package:flutter/material.dart';
 import 'package:t3/models/group_member.dart';
-import '../models/app_database.dart';
+
+
 import 'package:sembast/sembast.dart';
 import '../models/sembast_database.dart';
 
@@ -33,10 +34,10 @@ class HistoryItem {
 
   static HistoryItem fromMap(Map<String, dynamic> map) {
     return HistoryItem(
-      id: map['id'],
-      dateTime: DateTime.parse(map['dateTime']),
-      groupName: map['groupName'],
-       subGroups: (map['subGroups'] as List<dynamic>)
+        id: map['id'],
+        dateTime: DateTime.parse(map['dateTime']),
+        groupName: map['groupName'],
+        subGroups: (map['subGroups'] as List<dynamic>)
             .map((subGroup) => ((subGroup) as List<dynamic>)
                 .map(
                   (member) => GroupMember(
@@ -48,15 +49,12 @@ class HistoryItem {
                 )
                 .toList())
             .toList()
-          .toList(),
-    );
+            .toList(),
+        note: map['note']);
   }
 }
 
 class History with ChangeNotifier {
-
-  
-
   List<HistoryItem> _history = [];
 
   List<HistoryItem> get history {
@@ -72,43 +70,28 @@ class History with ChangeNotifier {
 
   Future<Database> get _db async => await SDatabase.instance.database;
 
-
   Future<void> addToHistory(
-    String id,
-    List<List<GroupMember>> subGroups,
-    String groupName,
-    String note,
+    HistoryItem item,
   ) async {
-    // final url =
-    //     'https://flutter-project-4ed4f.firebaseio.com/history/$userId.json?auth=$authToken';
-    // final timeStamp = DateTime.now();
+    final newHistoryItem = HistoryItem(
+      id: UniqueKey().toString(),
+      subGroups: item.subGroups,
+      dateTime: item.dateTime,
+      groupName: item.groupName,
+      note: item.note,
+    );
 
-    // final response = await http.post(url,
-    //     body: jsonEncode({
-    //       'groupName': groupName,
-    //       'note': note,
-    //       'dateTime': timeStamp.toIso8601String(),
-    //       'subGroups':
-    //           subGroups.map((i) => i.map((k) => k.toJson()).toList()).toList()
-    //     }));
-    final timeStamp = DateTime.now();
     _history.insert(
       0,
-      HistoryItem(
-        id: UniqueKey().toString(),
-        subGroups: subGroups,
-        dateTime: timeStamp,
-        groupName: groupName,
-        note: note,
-      ),
+      newHistoryItem,
     );
 
     await _historyFolder.add(await _db, {
-      'id': id,
-      'dateTime': timeStamp.toIso8601String(),
-      'groupName': groupName,
-      'note': note,
-      'subGroups': subGroups
+      'id': newHistoryItem.id,
+      'dateTime': newHistoryItem.dateTime.toIso8601String(),
+      'groupName': newHistoryItem.groupName,
+      'note': newHistoryItem.note,
+      'subGroups': newHistoryItem.subGroups
           .map((subGroup) => subGroup.map((gm) => gm.toJson()).toList())
           .toList()
     });
@@ -116,41 +99,42 @@ class History with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> removeFromHistory(String id) async {
+  Future<void> updateHistory(
+    HistoryItem updatedItem,
+  ) async {
+    final itemIndex = _history.indexWhere((item) => item.id == updatedItem.id);
 
+    if (itemIndex >= 0) {
+      final finder = Finder(filter: Filter.equals('id', updatedItem.id));
+      await _historyFolder.update(
+          await _db,
+          {
+            'note': updatedItem.note,
+          },
+          finder: finder);
+      _history[itemIndex] = updatedItem;
+      notifyListeners();
+    }
   }
 
-  Future<void> insertHistory(
-    String id,
-    List<List<GroupMember>> subGroups,
-    String groupName,
-    String note,
-  ) async {
-    final timeStamp = DateTime.now();
+  Future<void> removeFromHistory(String id) async { 
+    final existingIndex =
+        _history.indexWhere((item) => item.id == id);
 
-    AppDatabase.insert('history', {
-      'id': UniqueKey().toString(),
-      'groupName': groupName,
-      'dateTime': timeStamp.toIso8601String(),
-      'note': note,
-      'smallGroups': jsonEncode({
-        'subGroups':
-            subGroups.map((i) => i.map((k) => k.toJson()).toList()).toList()
-      }),
-    });
+    final finder = Finder(filter: Filter.equals('id', id));
+    await _historyFolder.delete(await _db, finder: finder);
+
+    _history.removeAt(existingIndex);
+    notifyListeners();
   }
 
   Future<void> getHistory() async {
-
     final recordSnapshot = await _historyFolder.find(await _db);
     List<HistoryItem> loadedH;
     loadedH = recordSnapshot.map((snapshot) {
-      print(snapshot.value);
       final historyEntry = HistoryItem.fromMap(snapshot.value);
-      print(historyEntry);
       return historyEntry;
     }).toList();
     _history = loadedH;
-    print(_history);
   }
 }

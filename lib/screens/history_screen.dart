@@ -19,7 +19,7 @@ class HistoryScreen extends StatelessWidget {
         builder: (ctx, dataSnapshot) {
           if (dataSnapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
-          } else {
+          }  else {
             return Column(
               children: <Widget>[
                 Container(
@@ -29,9 +29,9 @@ class HistoryScreen extends StatelessWidget {
                     child: Text('Text'),
                   ),
                 ),
-                Expanded(
-                    child: Consumer<History>(
-                  builder: (ctx, history, child) => ListView.builder(
+              Consumer<History>(
+                  builder: (ctx, history, child) =>  Expanded(
+                    child: history.history.length > 0 ? ListView.builder(
                       itemBuilder: (ctx, index) => HistoryEntry(
                             history.history
                                 .where((entry) => entry.groupName == gName)
@@ -39,8 +39,8 @@ class HistoryScreen extends StatelessWidget {
                                 .reversed
                                 .toList()[index],
                           ),
-                      itemCount: 3),
-                )),
+                      itemCount: history.history.length) : Center(child: Text('No entries added yet!'))
+              )),
               ],
             );
           }

@@ -61,7 +61,6 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                   IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
-                        print(widget.group.groupName);
                         return showDialog(
                           context: context,
                           builder: (ctx) => AlertDialog(

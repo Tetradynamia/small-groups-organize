@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t3/models/group_member.dart';
+import 'package:t3/widgets/edit_history_entry.dart';
 import 'package:t3/widgets/shuffle_item.dart';
 
 import '../models/members_groups_model.dart';
-import '../models/history.dart';
+
 
 class ShuffleScreen extends StatefulWidget {
   @override
@@ -29,8 +30,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
     super.didChangeDependencies();
     final id = ModalRoute.of(context).settings.arguments;
 
-   
-    _availableMembers = Provider.of<MembersGroupsModel>(context,listen: false)
+    _availableMembers = Provider.of<MembersGroupsModel>(context, listen: false)
         .members
         .where((member) => member.groupName == id)
         .toList()
@@ -165,8 +165,10 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
 
   @override
   Widget build(BuildContext context) {
-     print(Provider.of<MembersGroupsModel>(context, listen: false).availableMembers.length);
-            
+    print(Provider.of<MembersGroupsModel>(context, listen: false)
+        .availableMembers
+        .length);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Padding(
@@ -330,42 +332,13 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                   context: context,
                   builder: (ctx) => AlertDialog(
                         title: Text('Want to save?'),
-                        content: _isLoading
-                            ? Center(child: CircularProgressIndicator())
-                            : Text('Are you sure?'),
-                        actions: <Widget>[
-                          FlatButton(
-                              onPressed: () async {
-                                setState(() {
-                                  _isLoading = true;
-                                });
-                                await Provider.of<History>(context,
-                                        listen: false)
-                                    .addToHistory(
-                                        DateTime.now().toString(),
-                                        _currentInGroups,
-                                        ModalRoute.of(context)
-                                            .settings
-                                            .arguments,
-                                        'note');
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                                Navigator.of(context).pop(true);
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text(
-                                    'Added to history!',
-                                  ),
-                                  duration: Duration(seconds: 2),
-                                ));
-                              },
-                              child: Text('Yes')),
-                          FlatButton(
-                              onPressed: () {
-                                Navigator.of(ctx).pop();
-                              },
-                              child: Text('No'))
-                        ],
+                        content: EditHistoryEntry(
+                          null,
+                          _currentInGroups,
+                          DateTime.now(),
+                          ModalRoute.of(context).settings.arguments,
+                          null,
+                        ),
                       ));
             }),
       ),

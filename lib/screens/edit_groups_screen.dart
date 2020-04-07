@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:t3/models/group_member.dart';
 
+
+import '../models/group_member.dart';
 import '../models/groups.dart';
 import '../models/members_groups_model.dart';
 
