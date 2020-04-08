@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 import '../models/members_groups_model.dart';
 import '../models/group_member.dart';
 
@@ -13,18 +12,14 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
-    final gName = ModalRoute.of(context).settings.arguments;
+    final id = ModalRoute.of(context).settings.arguments;
 
     final thisGroupMembers =
         Provider.of<MembersGroupsModel>(context, listen: false)
-            .members
-            .where((member) => member.groupName == gName)
-            .toList();
+            .thisGroupMembers(id);
 
     final availableMembers = Provider.of<MembersGroupsModel>(context)
-        .availableMembers
-        .where((member) => member.groupName == gName)
-        .toList();
+        .thisGroupAvailableMembers(id);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -66,7 +61,7 @@ class _GroupScreenState extends State<GroupScreen> {
                           setState(() {
                             member.toggleIsAbsent();
                           });
-                          
+
                           if (member.isAbsent) {
                             Scaffold.of(context).hideCurrentSnackBar();
                             Scaffold.of(context).showSnackBar(SnackBar(

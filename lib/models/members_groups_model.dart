@@ -23,6 +23,16 @@ class MembersGroupsModel with ChangeNotifier {
     return [..._members.where((member) => member.isAbsent == false)];
   }
 
+  List<GroupMember> thisGroupMembers(String id) {
+    return _members.where((member) => member.groupId == id).toList();
+  }
+
+  List<GroupMember> thisGroupAvailableMembers(String id) {
+    return thisGroupMembers(id)
+        .where((member) => member.isAbsent == false)
+        .toList();
+  }
+
   Group findGroupById(String id) {
     return _groups.firstWhere((group) => group.groupId == id);
   }
@@ -38,7 +48,6 @@ class MembersGroupsModel with ChangeNotifier {
 
       loadedG = groupRecordSnapshot.map((snapshot) {
         final group = Group.fromJson(snapshot.value);
-        print(snapshot.value);
         return group;
       }).toList();
 
@@ -48,13 +57,13 @@ class MembersGroupsModel with ChangeNotifier {
       List<GroupMember> loadedM = [];
 
       final extracted = memberRecordSnapshot.map((snapshot) {
-        final student = GroupMember.fromJson(snapshot.value);
-        return student;
+        final member = GroupMember.fromJson(snapshot.value);
+        return member;
       }).toList();
       extracted.forEach((member) {
         loadedM.add(GroupMember(
           memberId: member.memberId,
-          groupName: member.groupName,
+          groupId: member.groupId,
           memberName: member.memberName,
           isAbsent: false,
         ));
@@ -102,9 +111,9 @@ class MembersGroupsModel with ChangeNotifier {
   Future<void> deleteGroup(String id, Group group) async {
     var groupIndex = _groups.indexWhere((group) => group.groupId == id);
 
-    var name = group.groupName;
+    var groupId = group.groupId;
     List<GroupMember> groupMembers = [];
-    groupMembers.addAll(_members.where((member) => member.groupName == name));
+    groupMembers.addAll(_members.where((member) => member.groupId == groupId));
 
     final finder = Finder(filter: Filter.equals('groupId', id));
     await _groupFolder.delete(await _db, finder: finder);
@@ -116,17 +125,7 @@ class MembersGroupsModel with ChangeNotifier {
     }
 
     _groups.removeAt(groupIndex);
-    notifyListeners();
-  }
 
-  void toggleAbsent(String id, GroupMember member) {
-    final taskIndex = _members.indexWhere((member) => member.memberId == id);
-    if (taskIndex >= 0) {
-      _members[taskIndex].toggleIsAbsent();
-    } else {
-      print(taskIndex);
-      print(id);
-    }
     notifyListeners();
   }
 
@@ -134,14 +133,14 @@ class MembersGroupsModel with ChangeNotifier {
     final newMember = GroupMember(
       memberId: UniqueKey().toString(),
       memberName: member.memberName,
-      groupName: member.groupName,
+      groupId: member.groupId,
       isAbsent: member.isAbsent,
     );
 
     await _memberFolder.add(await _db, {
       'memberId': newMember.memberId,
       'memberName': newMember.memberName,
-      'groupName': newMember.groupName,
+      'groupId': newMember.groupId,
     });
 
     _members.insert(0, newMember);
@@ -151,7 +150,6 @@ class MembersGroupsModel with ChangeNotifier {
   Future<void> removeMember(String id) async {
     final existingMemberIndex =
         _members.indexWhere((member) => member.memberId == id);
-    print(existingMemberIndex);
 
     final finder = Finder(filter: Filter.equals('memberId', id));
     await _memberFolder.delete(await _db, finder: finder);
@@ -171,7 +169,6 @@ class MembersGroupsModel with ChangeNotifier {
           await _db,
           {
             'memberName': updatedMember.memberName,
-            'groupName': updatedMember.groupName,
           },
           finder: finder);
       _members[groupIndex] = updatedMember;
@@ -186,8 +183,4 @@ class MembersGroupsModel with ChangeNotifier {
   final _memberFolder = intMapStoreFactory.store(memberFolder);
 
   Future<Database> get _db async => await SDatabase.instance.database;
-
-  void empty(){
-    notifyListeners();
-  }
 }

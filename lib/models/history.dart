@@ -11,21 +11,21 @@ class HistoryItem {
   final String id;
   final List<List<GroupMember>> subGroups;
   final DateTime dateTime;
-  final String groupName;
+  final String groupId;
   final String note;
 
   HistoryItem({
     @required this.id,
     @required this.subGroups,
     @required this.dateTime,
-    @required this.groupName,
+    @required this.groupId,
     this.note,
   });
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'id': id,
         'dateTime': dateTime.toIso8601String(),
-        'groupName': groupName,
+        'groupId': groupId,
         'note': note,
         'subGroups': subGroups
             .map((subGroup) => subGroup.map((gm) => gm.toJson()).toList())
@@ -36,14 +36,14 @@ class HistoryItem {
     return HistoryItem(
         id: map['id'],
         dateTime: DateTime.parse(map['dateTime']),
-        groupName: map['groupName'],
+        groupId: map['groupId'],
         subGroups: (map['subGroups'] as List<dynamic>)
             .map((subGroup) => ((subGroup) as List<dynamic>)
                 .map(
                   (member) => GroupMember(
                     memberName: member['memberName'],
                     memberId: member['memberId'],
-                    groupName: member['groupName'],
+                    groupId: member['groupId'],
                     isAbsent: member['isAbsent'],
                   ),
                 )
@@ -77,7 +77,7 @@ class History with ChangeNotifier {
       id: UniqueKey().toString(),
       subGroups: item.subGroups,
       dateTime: item.dateTime,
-      groupName: item.groupName,
+    groupId: item.groupId,
       note: item.note,
     );
 
@@ -89,7 +89,7 @@ class History with ChangeNotifier {
     await _historyFolder.add(await _db, {
       'id': newHistoryItem.id,
       'dateTime': newHistoryItem.dateTime.toIso8601String(),
-      'groupName': newHistoryItem.groupName,
+      'groupId': newHistoryItem.groupId,
       'note': newHistoryItem.note,
       'subGroups': newHistoryItem.subGroups
           .map((subGroup) => subGroup.map((gm) => gm.toJson()).toList())

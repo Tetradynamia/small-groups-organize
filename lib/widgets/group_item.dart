@@ -19,7 +19,7 @@ class GroupItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final groupData = Provider.of<MembersGroupsModel>(context);
     final thisGroupMembers =
-        groupData.members.where((member) => member.groupName == name);
+        groupData.members.where((member) => member.groupId == id);
     return InkWell(
         splashColor: Theme.of(context).primaryColor,
         borderRadius: BorderRadius.only(
@@ -29,7 +29,7 @@ class GroupItem extends StatelessWidget {
             bottomRight: Radius.circular(50)),
         onTap: () {
           Navigator.of(context)
-              .pushNamed(TabsScreen.routeName, arguments: name);
+              .pushNamed(TabsScreen.routeName, arguments: id);
         },
         child: Container(
           height: 150,

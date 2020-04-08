@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
-import '../models/group_member.dart';
 import '../models/groups.dart';
 import '../models/members_groups_model.dart';
 
@@ -29,7 +27,6 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
   };
   var _isInit = true;
 
-  String _oldName;
   var _isLoading = false;
 
   @override
@@ -39,14 +36,10 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
         _editedGroup = Provider.of<MembersGroupsModel>(context, listen: false)
             .findGroupById(widget.groupId);
 
-
         _initValues = {
           'name': _editedGroup.groupName,
           'description': _editedGroup.groupDescription,
         };
-
-        _oldName = _editedGroup.groupName;
-        print(_oldName);
       }
     }
 
@@ -73,58 +66,16 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
     if (_editedGroup.groupId != null) {
       await Provider.of<MembersGroupsModel>(context, listen: false)
           .updateGroup(_editedGroup.groupId, _editedGroup);
-
-      if (_editedGroup.groupName != _oldName) {
-        List _helperList = [];
-        Provider.of<MembersGroupsModel>(context, listen: false)
-            .members
-            .where((member) => member.groupName == _oldName).toList()
-            .forEach((member) => _helperList.add(member.memberId));
-        print(_helperList);
-        _helperList.forEach((id) async {
-          await Provider.of<MembersGroupsModel>(context, listen: false)
-              .updateMember(
-                  id,
-                  GroupMember(
-                      memberId: id,
-                      memberName: Provider.of<MembersGroupsModel>(context,
-                              listen: false)
-                          .findMemberById(id)
-                          .memberName,
-                      groupName: _editedGroup.groupName));
-        });
-      }
     } else {
-      try {
-        await Provider.of<MembersGroupsModel>(context, listen: false).addGroup(
-          Group(
-            groupId: _editedGroup.groupId,
-            groupName: _editedGroup.groupName,
-            groupDescription: _editedGroup.groupDescription,
-          ),
-        );
-      } catch (error) {
-        await showDialog<Null>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: Text('An error occured!'),
-            content: Text('Something went wrong!'),
-            actions: [
-              FlatButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Okay'))
-            ],
-          ),
-        );
-      } // finally {
-      //   setState(() {
-      //     _isLoading = false;
-      //   });
-      //   Navigator.of(context).pop();
-      // }
+      await Provider.of<MembersGroupsModel>(context, listen: false).addGroup(
+        Group(
+          groupId: _editedGroup.groupId,
+          groupName: _editedGroup.groupName,
+          groupDescription: _editedGroup.groupDescription,
+        ),
+      );
     }
+
     setState(() {
       _isLoading = false;
     });

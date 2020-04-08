@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import 'package:t3/models/history.dart';
-import 'package:t3/screens/group_overview.dart';
-import 'package:t3/screens/manage_groups_screen.dart';
-
+import './models/history.dart';
+import './screens/group_overview.dart';
+import './screens/manage_groups_screen.dart';
 import './models/members_groups_model.dart';
 import './screens/tabs_screen.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override

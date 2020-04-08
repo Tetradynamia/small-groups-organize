@@ -20,9 +20,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
   @override
   Widget build(BuildContext context) {
     final groupData = Provider.of<MembersGroupsModel>(context)
-        .members
-        .where((member) => member.groupName == widget.group.groupName)
-        .toList();
+        .thisGroupMembers(widget.group.groupId);
     return Column(
       children: <Widget>[
         Card(
@@ -54,7 +52,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                           context: context,
                           builder: (ctx) => AlertDialog(
                             title: Text('Add member'),
-                            content: EditMembers(null, widget.group.groupName),
+                            content: EditMembers(null, widget.group.groupId),
                           ),
                         );
                       }),
@@ -139,14 +137,14 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                         children: [
                           IconButton(
                               icon: Icon(Icons.edit),
-                              onPressed: () {print(groupData[index].memberId);
+                              onPressed: () {
                                 return showDialog(
                                   context: context,
                                   builder: (ctx) => AlertDialog(
                                     title: Text('Edit member'),
                                     content: EditMembers(
                                         groupData[index].memberId,
-                                        widget.group.groupName),
+                                        widget.group.groupId),
                                   ),
                                 );
                               }),

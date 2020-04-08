@@ -51,7 +51,7 @@ class _HistoryEntryState extends State<HistoryEntry> {
                             widget.entry.id,
                             widget.entry.subGroups,
                             widget.entry.dateTime,
-                            widget.entry.groupName,
+                            widget.entry.groupId,
                             widget.entry.note,
                           ),
                         ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../screens/group_screen.dart';
 import '../screens/history_screen.dart';
 import '../screens/shuffle_screen.dart';
+import '../models/members_groups_model.dart';
 
 class TabsScreen extends StatefulWidget {
   static const routeName = '/tabs';
@@ -12,6 +14,8 @@ class TabsScreen extends StatefulWidget {
 }
 
 class _TabsScreenState extends State<TabsScreen> {
+  String _groupName;
+  bool _isInit = true;
   List<Map<String, Object>> _pages;
 
   int _selectedPageIndex = 1;
@@ -26,8 +30,15 @@ class _TabsScreenState extends State<TabsScreen> {
     super.initState();
   }
 
- 
-  
+  @override
+  void didChangeDependencies() {
+    if(_isInit){
+    _groupName = Provider.of<MembersGroupsModel>(context, listen: false)
+        .findGroupById(ModalRoute.of(context).settings.arguments)
+        .groupName;}
+        _isInit = false;
+    super.didChangeDependencies();
+  }
 
   void _selectPage(int index) {
     setState(() {
@@ -39,7 +50,7 @@ class _TabsScreenState extends State<TabsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${ModalRoute.of(context).settings.arguments} '),
+        title: Text(_groupName),
       ),
       body: _pages[_selectedPageIndex]["page"],
       bottomNavigationBar: BottomNavigationBar(
@@ -67,7 +78,6 @@ class _TabsScreenState extends State<TabsScreen> {
           )
         ],
       ),
-     
     );
   }
 }

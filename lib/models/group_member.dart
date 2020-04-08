@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 class GroupMember with ChangeNotifier {
   final String memberId;
   final String memberName;
-  final String groupName;
+  final String groupId;
   bool isAbsent;
 
   GroupMember({
     @required this.memberId,
     @required this.memberName,
-    @required this.groupName,
+    @required this.groupId,
     this.isAbsent = false,
   });
 
@@ -26,14 +26,15 @@ class GroupMember with ChangeNotifier {
   Map toJson() => {
         'memberId': memberId,
         'memberName': memberName,
-        'groupName': groupName,
+        'groupId': groupId,
         'isAbsent': isAbsent,
       };
 
   GroupMember.fromJson(Map<String, dynamic> json)
       : memberId = json['memberId'],
         memberName = json['memberName'],
-        groupName = json['groupName'];
+        groupId = json['groupId'],
+        isAbsent = json['isAbsent'];
 
      
   

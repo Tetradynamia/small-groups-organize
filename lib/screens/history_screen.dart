@@ -31,15 +31,17 @@ class HistoryScreen extends StatelessWidget {
                 ),
               Consumer<History>(
                   builder: (ctx, history, child) =>  Expanded(
-                    child: history.history.length > 0 ? ListView.builder(
+                    child: history.history.where((entry) => entry.groupId == gName)
+                                .toList().length > 0 ? ListView.builder(
                       itemBuilder: (ctx, index) => HistoryEntry(
                             history.history
-                                .where((entry) => entry.groupName == gName)
+                                .where((entry) => entry.groupId == gName)
                                 .toList()
                                 .reversed
                                 .toList()[index],
                           ),
-                      itemCount: history.history.length) : Center(child: Text('No entries added yet!'))
+                      itemCount: history.history.where((entry) => entry.groupId == gName)
+                                .toList().length) : Center(child: Text('No entries added yet!'))
               )),
               ],
             );

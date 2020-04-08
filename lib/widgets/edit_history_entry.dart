@@ -9,14 +9,14 @@ class EditHistoryEntry extends StatefulWidget {
   final String id;
   final List<List<GroupMember>> subGroups;
   final DateTime dateTime;
-  final String groupName;
+  final String groupId;
   final String note;
 
   EditHistoryEntry(
     this.id,
     this.subGroups,
     this.dateTime,
-    this.groupName,
+    this.groupId,
     this.note,
   );
 
@@ -30,7 +30,7 @@ class _EditHistoryEntryState extends State<EditHistoryEntry> {
   var _editedEntry = HistoryItem(
     id: null,
     dateTime: null,
-    groupName: '',
+    groupId: '',
     subGroups: null,
     note: '',
   );
@@ -83,7 +83,7 @@ class _EditHistoryEntryState extends State<EditHistoryEntry> {
                   _editedEntry = HistoryItem(
                     id: _editedEntry.id,
                     subGroups: widget.subGroups,
-                    groupName: widget.groupName,
+                    groupId: widget.groupId,
                     dateTime: widget.dateTime,
                     note: value,
                   );

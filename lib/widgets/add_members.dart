@@ -7,9 +7,9 @@ import '../models/members_groups_model.dart';
 
 class EditMembers extends StatefulWidget {
   final String memberId;
-  final String groupName;
+  final String groupId;
 
-  EditMembers(this.memberId, this.groupName);
+  EditMembers(this.memberId, this.groupId);
   @override
   _EditMembersState createState() => _EditMembersState();
 }
@@ -18,7 +18,7 @@ class _EditMembersState extends State<EditMembers> {
   final _form = GlobalKey<FormState>();
   var _editedMember = GroupMember(
     memberId: null,
-    groupName: '',
+    groupId: '',
     memberName: '',
   );
   var _initValues = {
@@ -122,7 +122,7 @@ class _EditMembersState extends State<EditMembers> {
                         _editedMember = GroupMember(
                             memberId: _editedMember.memberId,
                             memberName: value,
-                            groupName: widget.groupName);
+                          groupId: widget.groupId);
                       },
                     ),
                     Row(
