@@ -6,21 +6,21 @@ class ShuffleItem extends StatelessWidget {
   ShuffleItem(this._currentInGroups);
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Container(
       child: ListView(
         children: [
           ..._currentInGroups
               .map((subGroup) => (Card(
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Card(
                           color: Theme.of(context).primaryColor,
                           child: ListTile(
                             title: Text(
                               'Small group ${_currentInGroups.indexOf(subGroup) + 1}:',
-                              style: TextStyle(
-                                fontSize: 16, color: Colors.white
-                              ),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
                             ),
                           ),
                         ),

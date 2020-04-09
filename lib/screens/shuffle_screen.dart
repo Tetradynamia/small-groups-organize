@@ -174,7 +174,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
         ),
         child: Column(
           children: <Widget>[
-            Flexible(
+            Container(
                           child: Card(
                   child: ListTile(
                     dense: true,
@@ -309,7 +309,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
             if (_availableMembers.isNotEmpty && _currentInGroups == null)
               Text('Assign new small groups'),
             if (_availableMembers.isNotEmpty && _currentInGroups != null)
-              ShuffleItem(_currentInGroups)
+              Expanded(child: ShuffleItem(_currentInGroups))
           ],
         ),
       ),
