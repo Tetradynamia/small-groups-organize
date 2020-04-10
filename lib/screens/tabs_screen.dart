@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t3/models/divide_small_groups.dart';
 
 import '../screens/group_screen.dart';
 import '../screens/history_screen.dart';
@@ -48,7 +49,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ChangeNotifierProvider.value( value: DivideSmallGroups(), child: Scaffold(
       appBar: AppBar(
         title: Text(_groupName),
       ),
@@ -78,6 +79,6 @@ class _TabsScreenState extends State<TabsScreen> {
           )
         ],
       ),
-    );
+    ),);
   }
 }

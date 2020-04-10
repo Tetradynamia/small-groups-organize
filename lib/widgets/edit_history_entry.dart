@@ -97,7 +97,10 @@ class _EditHistoryEntryState extends State<EditHistoryEntry> {
                         Text('Save'),
                       ],
                     ),
-                    onPressed: _saveForm),
+                    onPressed: () { _saveForm();
+                    
+                    
+                     }),
                 FlatButton(
                     child: Text('Cancel'),
                     onPressed: () {
