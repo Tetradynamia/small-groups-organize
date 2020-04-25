@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 import '../models/group_member.dart';
 import '../models/members_groups_model.dart';
 
@@ -57,7 +56,6 @@ class _EditMembersState extends State<EditMembers> {
     }
     _form.currentState.save();
 
-
     setState(() {
       _isLoading = true;
     });
@@ -72,14 +70,14 @@ class _EditMembersState extends State<EditMembers> {
         await showDialog<Null>(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('An error occured!'),
-            content: Text('Something went wrong!'),
+            title: const Text('An error occured!'),
+            content: const Text('Something went wrong!'),
             actions: [
               FlatButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Okay'))
+                  child: const Text('Okay'))
             ],
           ),
         );
@@ -97,55 +95,54 @@ class _EditMembersState extends State<EditMembers> {
         ? Center(
             child: CircularProgressIndicator(),
           )
-        : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Form(
-              key: _form,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    TextFormField(
-                      autofocus: true,
-                      initialValue: _initValues['name'],
-                      decoration: InputDecoration(labelText: 'Name:'),
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) {
-                        Navigator.of(context).pop();
-                      },
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please provide a valid name';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _editedMember = GroupMember(
-                            memberId: _editedMember.memberId,
-                            memberName: value,
-                          groupId: widget.groupId);
-                      },
-                    ),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          FlatButton(
-                              child: Row(
-                                children: <Widget>[
-                                  Icon(Icons.save),
-                                  Text('Save'),
-                                ],
-                              ),
-                              onPressed: _saveForm),
-                          FlatButton(
-                              child: Text('Cancel'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              })
-                        ])
-                  ],
+        : Form(
+          key: _form,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextFormField(
+                  autofocus: true,
+                  initialValue: _initValues['name'],
+                  decoration: InputDecoration(labelText: 'Name:'),
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) {
+                    Navigator.of(context).pop();
+                  },
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please provide a valid name';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _editedMember = GroupMember(
+                        memberId: _editedMember.memberId,
+                        memberName: value,
+                        groupId: widget.groupId);
+                  },
                 ),
-              ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      FlatButton.icon(
+                          icon: const Icon(Icons.save, color: Colors.black),
+                          label: const Text(
+                            'Save',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onPressed: _saveForm),
+                      FlatButton(
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          })
+                    ])
+              ],
             ),
-          );
+          ),
+        );
   }
 }

@@ -14,7 +14,7 @@ class GroupOverview extends StatelessWidget {
      print('building shit');
     return  Scaffold(
       appBar: AppBar(
-        title: Text('Your Groups'),
+        title: const Text('Your Groups'),
       ),
       body: FutureBuilder(
           future: Provider.of<MembersGroupsModel>(context, listen: false)
@@ -22,12 +22,12 @@ class GroupOverview extends StatelessWidget {
           builder: (ctx, dataSnapshot) {
             if (
                 dataSnapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (dataSnapshot.error != null) {
-              return Center(child: Text('An error occured!'));
+              return const Center(child: const Text('An error occured!'));
             } else {
               return Provider.of<MembersGroupsModel>(context).groups.isEmpty
-                  ? Start()
+                  ?  Start()
                   : GroupsGrid();
             }
           }),
@@ -37,7 +37,7 @@ class GroupOverview extends StatelessWidget {
             Navigator.of(context)
                 .pushReplacementNamed(ManageGroupsScreen.routeName);
           },
-          child: Icon(Icons.edit)),
+          child: const Icon(Icons.edit)),
     );
   }
 }

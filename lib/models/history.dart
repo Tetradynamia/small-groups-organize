@@ -1,8 +1,5 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:t3/models/group_member.dart';
-
 
 import 'package:sembast/sembast.dart';
 import '../models/sembast_database.dart';
@@ -77,7 +74,7 @@ class History with ChangeNotifier {
       id: UniqueKey().toString(),
       subGroups: item.subGroups,
       dateTime: item.dateTime,
-    groupId: item.groupId,
+      groupId: item.groupId,
       note: item.note,
     );
 
@@ -95,7 +92,7 @@ class History with ChangeNotifier {
           .map((subGroup) => subGroup.map((gm) => gm.toJson()).toList())
           .toList()
     });
-    print('Student Inserted successfully !!');
+
     notifyListeners();
   }
 
@@ -117,15 +114,23 @@ class History with ChangeNotifier {
     }
   }
 
-  Future<void> removeFromHistory(String id) async { 
-    final existingIndex =
-        _history.indexWhere((item) => item.id == id);
-
+  Future<void> removeFromHistory(String id,) async {
+    final existingIndex = _history.indexWhere((item) => item.id == id);
     final finder = Finder(filter: Filter.equals('id', id));
+
     await _historyFolder.delete(await _db, finder: finder);
 
     _history.removeAt(existingIndex);
+    print('object');
     notifyListeners();
+  }
+
+  Future<void> removeGroupHistory(String groupId) async {
+     List <HistoryItem> groupHistory = [];
+    groupHistory.addAll(_history.where((entry) => entry.groupId == groupId));
+    groupHistory.forEach((entry) {
+      removeFromHistory(entry.id);
+    });
   }
 
   Future<void> getHistory() async {

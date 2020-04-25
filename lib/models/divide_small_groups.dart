@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:sembast/sembast.dart';
 
 import '../models/group_member.dart';
-
+import '../models/sembast_database.dart';
 
 class DivideSmallGroups with ChangeNotifier {
+  LatestItem _latest;
 
-List<List<GroupMember>> numberOfGroups(int numberOfGroups, List<GroupMember> _availableMembers) {
+  LatestItem get latest {
+    return _latest;
+  }
+
+  List<List<GroupMember>> numberOfGroups(
+      int numberOfGroups, List<GroupMember> _availableMembers) {
     // Initialize an empty variable
     List<List<GroupMember>> members;
 
@@ -37,12 +44,11 @@ List<List<GroupMember>> numberOfGroups(int numberOfGroups, List<GroupMember> _av
       }
       members = temp;
     }
-print('number');
-return members;
-}
+    return members;
+  }
 
-
- List<List<GroupMember>>  sizeOfGroups(int sizeOfGroups, List<GroupMember> _availableMembers) {
+  List<List<GroupMember>> sizeOfGroups(
+      int sizeOfGroups, List<GroupMember> _availableMembers) {
 // Initialize an empty variable
     List<List<GroupMember>> smallGroups;
 
@@ -80,20 +86,102 @@ return members;
       temp.add(_availableMembers);
     }
 
-    if (_availableMembers.length != 0) {
-      print('OH SHIT ${_availableMembers.length}');
-    }
     smallGroups = temp;
-    print('size');
     return smallGroups;
-  
   }
 
+  static const String latestFolder = "Latest";
+  final _latestFolder = intMapStoreFactory.store(latestFolder);
 
+  Future<Database> get _db async => await SDatabase.instance.database;
 
+  Future<void> storeLatest(
+    String groupId,
+    List<List<GroupMember>> smallGroups,
+  ) async {
+    if (smallGroups == null) {
+      return;
+    }
+    final timeStamp = DateTime.now();
 
+    _latest = LatestItem(
+      groupId: groupId,
+      dateTime: timeStamp,
+      subGroups: smallGroups,
+    );
+    notifyListeners();
+    await _latestFolder.add(await _db, {
+      'groupId': groupId,
+      'dateTime': timeStamp.toIso8601String(),
+      'subGroups': smallGroups
+          .map((subGroup) => subGroup.map((gm) => gm.toJson()).toList())
+          .toList()
+    });
+    print(groupId);
+    notifyListeners();
+  }
 
+  Future<void> fetchLatest(String id) async {
+    print('fetching');
+    final finder = Finder(filter: Filter.equals('groupId', id));
+    final recordSnapshot = await _latestFolder.find(await _db, finder: finder);
 
+    final ll = recordSnapshot.map((snapshot) {
+      final last = LatestItem.fromJson(snapshot.value);
+      return last;
+    }).toList();
+    if (ll.isEmpty) {
+      print('crap');
+      _latest = null;
+      return;
+    }
+    _latest = ll.last;
+  }
 
+  Future<void> deleteLatest(String id) async {
+    final filter = Filter.and([ Filter.equals('groupId', id),
+        Filter.lessThan('dateTime', DateTime.now().toIso8601String())]);
+    var finder = Finder(filter: filter);
+    await _latestFolder.delete(await _db, finder: finder);
+  }
+}
 
+class LatestItem {
+  final DateTime dateTime;
+  final String groupId;
+  final List<List<GroupMember>> subGroups;
+
+  LatestItem({
+    @required this.dateTime,
+    @required this.groupId,
+    @required this.subGroups,
+  });
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'dateTime': dateTime.toIso8601String(),
+        'groupId': groupId,
+        'subGroups': subGroups
+            .map((subGroup) => subGroup.map((gm) => gm.toJson()).toList())
+            .toList()
+      };
+
+  static LatestItem fromJson(Map<String, dynamic> json) {
+    return LatestItem(
+      dateTime: DateTime.parse(json['dateTime']),
+      groupId: json['groupId'],
+      subGroups: (json['subGroups'] as List<dynamic>)
+          .map((subGroup) => ((subGroup) as List<dynamic>)
+              .map(
+                (member) => GroupMember(
+                  memberName: member['memberName'],
+                  memberId: member['memberId'],
+                  groupId: member['groupId'],
+                  isAbsent: member['isAbsent'],
+                ),
+              )
+              .toList())
+          .toList()
+          .toList(),
+    );
+  }
 }

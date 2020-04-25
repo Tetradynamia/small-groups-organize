@@ -85,69 +85,66 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
   @override
   Widget build(BuildContext context) {
     return _isLoading
-        ? Center(
+        ? const Center(
             child: CircularProgressIndicator(),
           )
-        : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Form(
-              key: _form,
-              child: SingleChildScrollView(
-                child: Column(children: [
-                  TextFormField(
-                    initialValue: _initValues['name'],
-                    decoration: InputDecoration(labelText: 'Name:'),
-                    textInputAction: TextInputAction.next,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context)
-                          .requestFocus(_descriptionFocusNode);
-                    },
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please provide a valid name';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _editedGroup = Group(
-                          groupId: _editedGroup.groupId,
-                          groupName: value,
-                          groupDescription: _editedGroup.groupDescription);
-                    },
-                  ),
-                  TextFormField(
-                    initialValue: _initValues['description'],
-                    decoration: InputDecoration(labelText: 'Description:'),
-                    maxLines: 3,
-                    keyboardType: TextInputType.multiline,
-                    focusNode: _descriptionFocusNode,
-                    onSaved: (value) {
-                      _editedGroup = Group(
-                          groupId: _editedGroup.groupId,
-                          groupName: _editedGroup.groupName,
-                          groupDescription: value);
-                    },
-                  ),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        FlatButton(
-                            child: Row(
-                              children: <Widget>[
-                                const Icon(Icons.save),
-                                const Text('Save'),
-                              ],
-                            ),
-                            onPressed: _saveForm),
-                        FlatButton(
-                            child: const Text('Cancel'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            })
-                      ])
-                ]),
+        : Form(
+          key: _form,
+          child: SingleChildScrollView(
+        child: Column(children: [
+          TextFormField(
+            initialValue: _initValues['name'],
+            decoration: InputDecoration(labelText: 'Name:'),
+            textInputAction: TextInputAction.next,
+            onFieldSubmitted: (_) {
+        FocusScope.of(context)
+            .requestFocus(_descriptionFocusNode);
+            },
+            validator: (value) {
+        if (value.isEmpty) {
+          return 'Please provide a valid name';
+        }
+        return null;
+            },
+            onSaved: (value) {
+        _editedGroup = Group(
+            groupId: _editedGroup.groupId,
+            groupName: value,
+            groupDescription: _editedGroup.groupDescription);
+            },
+          ),
+          TextFormField(
+            initialValue: _initValues['description'],
+            decoration: InputDecoration(labelText: 'Description:'),
+            maxLines: 3,
+            keyboardType: TextInputType.multiline,
+            focusNode: _descriptionFocusNode,
+            onSaved: (value) {
+        _editedGroup = Group(
+            groupId: _editedGroup.groupId,
+            groupName: _editedGroup.groupName,
+            groupDescription: value);
+            },
+          ),
+          Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          FlatButton(
+              child: Row(
+                children: <Widget>[
+                  const Icon(Icons.save),
+                  const Text('Save'),
+                ],
               ),
-            ),
-          );
+              onPressed: _saveForm),
+          FlatButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              })
+        ])
+        ]),
+          ),
+        );
   }
 }

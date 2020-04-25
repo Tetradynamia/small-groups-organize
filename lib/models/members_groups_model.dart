@@ -1,9 +1,12 @@
+
+
 import 'package:flutter/material.dart';
+import 'package:sembast/sembast.dart';
 
 import '../models/group_member.dart';
 import '../models/groups.dart';
 import '../models/sembast_database.dart';
-import 'package:sembast/sembast.dart';
+
 
 enum Mode { CloudMode, LocalMode }
 
@@ -69,6 +72,8 @@ class MembersGroupsModel with ChangeNotifier {
         ));
       });
       _members = loadedM;
+      print(_members.length);
+      print(_groups.length);
     }
   }
 
@@ -84,7 +89,6 @@ class MembersGroupsModel with ChangeNotifier {
       'groupDescription': group.groupDescription,
       'groupName': group.groupName,
     });
-    print('Student Inserted successfully !!');
 
     _groups.add(newGroup);
     notifyListeners();
@@ -124,6 +128,8 @@ class MembersGroupsModel with ChangeNotifier {
       });
     }
 
+
+
     _groups.removeAt(groupIndex);
 
     notifyListeners();
@@ -148,13 +154,13 @@ class MembersGroupsModel with ChangeNotifier {
   }
 
   Future<void> removeMember(String id) async {
-    final existingMemberIndex =
-        _members.indexWhere((member) => member.memberId == id);
+    // final existingMemberIndex =
+    //     _members.indexWhere((member) => member.memberId == id);
 
     final finder = Finder(filter: Filter.equals('memberId', id));
     await _memberFolder.delete(await _db, finder: finder);
 
-    _members.removeAt(existingMemberIndex);
+    _members.removeWhere((member) => member.memberId == id);
     notifyListeners();
   }
 

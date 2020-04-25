@@ -52,7 +52,8 @@ class _GroupScreenState extends State<GroupScreen> {
               itemCount: thisGroupMembers.length,
               itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
                 value: thisGroupMembers[index],
-                child: Card(
+                child: Card(shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),),
                   child: Consumer<GroupMember>(
                     builder: (ctx, member, _) => ListTile(
                       leading: Checkbox(

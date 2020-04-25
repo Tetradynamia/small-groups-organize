@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 import '../models/group_member.dart';
 import '../models/history.dart';
 
@@ -64,51 +63,43 @@ class _EditHistoryEntryState extends State<EditHistoryEntry> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Form(
-        key: _form,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextFormField(
-                autofocus: true,
-                initialValue: _initValues['note'],
-                decoration: InputDecoration(labelText: 'Note:'),
-                textInputAction: TextInputAction.done,
-                onFieldSubmitted: (_) {
-                  Navigator.of(context).pop();
-                },
-                onSaved: (value) {
-                  _editedEntry = HistoryItem(
-                    id: _editedEntry.id,
-                    subGroups: widget.subGroups,
-                    groupId: widget.groupId,
-                    dateTime: widget.dateTime,
-                    note: value,
-                  );
-                },
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                FlatButton(
-                    child: Row(
-                      children: <Widget>[
-                        Icon(Icons.save),
-                        Text('Save'),
-                      ],
-                    ),
-                    onPressed: () { _saveForm();
-                    
-                    
-                     }),
-                FlatButton(
-                    child: Text('Cancel'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    })
-              ])
-            ],
-          ),
+    return Form(
+      key: _form,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            TextFormField(
+              autofocus: true,
+              initialValue: _initValues['note'],
+              decoration: InputDecoration(labelText: 'Note:'),
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (_) {
+                Navigator.of(context).pop();
+              },
+              onSaved: (value) {
+                _editedEntry = HistoryItem(
+                  id: _editedEntry.id,
+                  subGroups: widget.subGroups,
+                  groupId: widget.groupId,
+                  dateTime: widget.dateTime,
+                  note: value,
+                );
+              },
+            ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              FlatButton.icon(
+                  icon: const Icon(Icons.save),
+                  label: const Text('Save'),
+                  onPressed: () {
+                    _saveForm();
+                  }),
+              FlatButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  })
+            ])
+          ],
         ),
       ),
     );

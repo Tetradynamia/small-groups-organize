@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:t3/widgets/manage_group_item.dart';
-import 'package:t3/widgets/start.dart';
 
+
+import '../widgets/manage_group_item.dart';
+import '../widgets/start.dart';
 import '../widgets/drawer.dart';
 import '../models/members_groups_model.dart';
 import '../screens/edit_groups_screen.dart';
@@ -10,8 +11,11 @@ import '../screens/edit_groups_screen.dart';
 class ManageGroupsScreen extends StatelessWidget {
   static const routeName = '/manage-groups';
 
-  Future <void> _refreshData (BuildContext context,) async {
-   await Provider.of<MembersGroupsModel>(context, listen: false).fetchAndSetGroupsMembers();
+  Future<void> _refreshData(
+    BuildContext context,
+  ) async {
+    await Provider.of<MembersGroupsModel>(context, listen: false)
+        .fetchAndSetGroupsMembers();
   }
 
   @override
@@ -23,16 +27,19 @@ class ManageGroupsScreen extends StatelessWidget {
       drawer: MainDrawer(),
       body: RefreshIndicator(
         onRefresh: () => _refreshData(context),
-              child: groups.isEmpty ? Start() : Padding(
+        child: groups.isEmpty
+            ? Start()
+            : Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(children: [
-          Expanded(
-            child: ListView.builder(
-                itemBuilder: (ctx, index) => ManageGroupsItem(groups[index]),
-                itemCount: groups.length,
-            ),
-          ),
-        ]),
+                  Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (ctx, index) =>
+                          ManageGroupsItem(groups[index]),
+                      itemCount: groups.length,
+                    ),
+                  ),
+                ]),
               ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -41,7 +48,11 @@ class ManageGroupsScreen extends StatelessWidget {
           return showDialog(
               context: context,
               builder: (ctx) => AlertDialog(
-                  title: const Text('Add group'), content: EditGroupsScreen(null)));
+                  shape:  RoundedRectangleBorder(
+                    borderRadius:  BorderRadius.circular(10.0),
+                  ),
+                  title: const Text('Add group'),
+                  content: EditGroupsScreen(null)));
         },
       ),
     );
