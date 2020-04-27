@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:t3/screens/manage_groups_screen.dart';
+
+
+import '../screens/group_overview.dart';
+import '../screens/manage_groups_screen.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
@@ -8,25 +11,28 @@ class MainDrawer extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("Hello!"),
+            title: const Text("small groups - ORGANIZE!"),
             automaticallyImplyLeading: false,
           ),
-          Divider(),
+        const  Divider(),
           ListTile(
-            leading: Icon(Icons.group),
-            title: Text("Group overview"),
+            leading: const Icon(Icons.group),
+            title: const Text("Group overview"),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed("/");
+              Navigator.of(context).pushReplacementNamed(GroupOverview.routeName);
             },
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.edit),
-            title: Text("Manage groups"),
+            leading: const Icon(Icons.edit),
+            title: const Text("Manage groups"),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(ManageGroupsScreen.routeName);
+              Navigator.of(context)
+                  .pushReplacementNamed(ManageGroupsScreen.routeName);
             },
-          )
+          ),
+         const Divider(),
+      
         ],
       ),
     );

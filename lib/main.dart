@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:t3/models/history.dart';
-import 'package:t3/screens/manage_groups_screen.dart';
 
+import './models/history.dart';
+import './screens/group_overview.dart';
+import './screens/manage_groups_screen.dart';
 import './models/members_groups_model.dart';
 import './screens/tabs_screen.dart';
-import './screens/group_overview.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(
-          value: MembersGroupsModel(),
-        ),
-        ChangeNotifierProvider.value(
-          value: History(),
-        ),
+        ChangeNotifierProvider.value(value: MembersGroupsModel()),
+        ChangeNotifierProvider.value(value: History()),
       ],
       child: MaterialApp(
-        title: 'MyShop',
+        title: 'small groups - ORGANIZE!',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
         routes: {
           TabsScreen.routeName: (ctx) => TabsScreen(),
           ManageGroupsScreen.routeName: (ctx) => ManageGroupsScreen(),
-         
+          GroupOverview.routeName: (ctx) => GroupOverview(),
         },
       ),
     );

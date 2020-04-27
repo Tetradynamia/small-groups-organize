@@ -19,7 +19,7 @@ class GroupItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final groupData = Provider.of<MembersGroupsModel>(context);
     final thisGroupMembers =
-        groupData.members.where((member) => member.groupName == name);
+        groupData.members.where((member) => member.groupId == id);
     return InkWell(
       splashColor: Theme.of(context).primaryColor,
       borderRadius: BorderRadius.only(
@@ -28,7 +28,7 @@ class GroupItem extends StatelessWidget {
           bottomLeft: Radius.circular(6),
           bottomRight: Radius.circular(50)),
       onTap: () {
-        Navigator.of(context).pushNamed(TabsScreen.routeName, arguments: name);
+        Navigator.of(context).pushNamed(TabsScreen.routeName, arguments: id);
       },
       child: Container(
         height: 150,
@@ -42,30 +42,36 @@ class GroupItem extends StatelessWidget {
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(6),
-              topRight: Radius.circular(6),
-              bottomLeft: Radius.circular(6),
-              bottomRight: Radius.circular(50)),
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
+              bottomLeft: Radius.circular(10),
+              bottomRight: Radius.circular(70)),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              name,
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            ),
-            Column(
-              children: <Widget>[
-                Text('Members;'),
-                Text(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                name,
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              const Text('Members;'),
+              Consumer<MembersGroupsModel>(
+                builder: (ctx, data, _) => Text(
                   '${thisGroupMembers.length}',
-                  style: TextStyle(fontSize: 20, color: Colors.white
-                  ),
+                  style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
-              ],
-            ),
-            Text(description, style: TextStyle( color: Colors.white),),
-          ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                child: Text(
+                  description,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

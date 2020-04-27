@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:t3/widgets/member_item.dart';
 
 import '../models/members_groups_model.dart';
+import '../models/group_member.dart';
 
-class GroupScreen extends StatelessWidget {
+class GroupScreen extends StatefulWidget {
+  @override
+  _GroupScreenState createState() => _GroupScreenState();
+}
+
+class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
-    final gName = ModalRoute.of(context).settings.arguments;
-    final memberData = Provider.of<MembersGroupsModel>(context);
-    final thisGroupMembers = memberData.members
-        .where((member) => member.groupName == gName)
-        .toList();
-    final thisGroupAvailableMembers = memberData.availableMembers
-        .where((member) => member.groupName == gName)
-        .toList();
+    final id = ModalRoute.of(context).settings.arguments;
+
+    final thisGroupMembers =
+        Provider.of<MembersGroupsModel>(context, listen: false)
+            .thisGroupMembers(id);
+
+    final availableMembers = Provider.of<MembersGroupsModel>(context)
+        .thisGroupAvailableMembers(id);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -24,29 +29,60 @@ class GroupScreen extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
               Card(
-                              child: ListTile(
-                    title: Row( mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: ListTile(
+                    title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Text('${thisGroupAvailableMembers.length} / ${thisGroupMembers.length} members present'),
+                    Text(
+                        '${availableMembers.length} / ${thisGroupMembers.length} members present'),
                   ],
                 )),
               ),
-              Divider(),
+              const Divider(),
               Row(
                 children: [
-                  Text('Is absent?'),
+                  const Text('Is absent?'),
                 ],
               )
             ]),
           ),
-          Divider(),
+          const Divider(),
           Expanded(
             child: ListView.builder(
               itemCount: thisGroupMembers.length,
               itemBuilder: (ctx, index) => ChangeNotifierProvider.value(
                 value: thisGroupMembers[index],
-                child: MemberItem(
-                  member: thisGroupMembers[index],
+                child: Card(shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),),
+                  child: Consumer<GroupMember>(
+                    builder: (ctx, member, _) => ListTile(
+                      leading: Checkbox(
+                        value: member.isAbsent,
+                        onChanged: (bool checked) {
+                          setState(() {
+                            member.toggleIsAbsent();
+                          });
+
+                          if (member.isAbsent) {
+                            Scaffold.of(context).hideCurrentSnackBar();
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                              content: Text(
+                                '${member.memberName} was marked as absent',
+                                textAlign: TextAlign.center,
+                              ),
+                              duration: Duration(seconds: 5),
+                            ));
+                          }
+                        },
+                      ),
+                      title: Text(
+                        member.memberName,
+                        style: TextStyle(
+                            color:
+                                member.isAbsent ? Colors.grey : Colors.black),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

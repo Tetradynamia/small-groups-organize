@@ -26,10 +26,11 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
     'description': '',
   };
   var _isInit = true;
-  String _oldName;
+
+  var _isLoading = false;
 
   @override
-  void didChangeDependencies() {
+  didChangeDependencies() {
     if (_isInit) {
       if (widget.groupId != null) {
         _editedGroup = Provider.of<MembersGroupsModel>(context, listen: false)
@@ -39,10 +40,9 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
           'name': _editedGroup.groupName,
           'description': _editedGroup.groupDescription,
         };
-        _oldName = _editedGroup.groupName;
       }
     }
-    
+
     _isInit = false;
     super.didChangeDependencies();
   }
@@ -53,52 +53,64 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
     super.dispose();
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final _isValid = _form.currentState.validate();
     if (!_isValid) {
       return;
     }
     _form.currentState.save();
+    setState(() {
+      _isLoading = true;
+    });
+
     if (_editedGroup.groupId != null) {
-      Provider.of<MembersGroupsModel>(context, listen: false)
+      await Provider.of<MembersGroupsModel>(context, listen: false)
           .updateGroup(_editedGroup.groupId, _editedGroup);
-      if (_editedGroup.groupName != _oldName) {
-        Provider.of<MembersGroupsModel>(context, listen: false)
-            .members
-            .where((member) => member.groupName == _oldName)
-            .forEach((member) => member.groupName = _editedGroup.groupName);
-      }
     } else {
-      Provider.of<MembersGroupsModel>(context, listen: false)
-          .addGroup(_editedGroup);
+      await Provider.of<MembersGroupsModel>(context, listen: false).addGroup(
+        Group(
+          groupId: _editedGroup.groupId,
+          groupName: _editedGroup.groupName,
+          groupDescription: _editedGroup.groupDescription,
+        ),
+      );
     }
+
+    setState(() {
+      _isLoading = false;
+    });
     Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _form,
-      child: SingleChildScrollView(
+    return _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(),
+          )
+        : Form(
+          key: _form,
+          child: SingleChildScrollView(
         child: Column(children: [
           TextFormField(
             initialValue: _initValues['name'],
             decoration: InputDecoration(labelText: 'Name:'),
             textInputAction: TextInputAction.next,
             onFieldSubmitted: (_) {
-              FocusScope.of(context).requestFocus(_descriptionFocusNode);
+        FocusScope.of(context)
+            .requestFocus(_descriptionFocusNode);
             },
             validator: (value) {
-              if (value.isEmpty) {
-                return 'Please provide a valid name';
-              }
-              return null;
+        if (value.isEmpty) {
+          return 'Please provide a valid name';
+        }
+        return null;
             },
             onSaved: (value) {
-              _editedGroup = Group(
-                  groupId: _editedGroup.groupId,
-                  groupName: value,
-                  groupDescription: _editedGroup.groupDescription);
+        _editedGroup = Group(
+            groupId: _editedGroup.groupId,
+            groupName: value,
+            groupDescription: _editedGroup.groupDescription);
             },
           ),
           TextFormField(
@@ -108,29 +120,31 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
             keyboardType: TextInputType.multiline,
             focusNode: _descriptionFocusNode,
             onSaved: (value) {
-              _editedGroup = Group(
-                  groupId: _editedGroup.groupId,
-                  groupName: _editedGroup.groupName,
-                  groupDescription: value);
+        _editedGroup = Group(
+            groupId: _editedGroup.groupId,
+            groupName: _editedGroup.groupName,
+            groupDescription: value);
             },
           ),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            FlatButton(
-                child: Row(
-                  children: <Widget>[
-                    Icon(Icons.save),
-                    Text('Save'),
-                  ],
-                ),
-                onPressed: _saveForm),
-            FlatButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                })
-          ])
+          Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          FlatButton(
+              child: Row(
+                children: <Widget>[
+                  const Icon(Icons.save),
+                  const Text('Save'),
+                ],
+              ),
+              onPressed: _saveForm),
+          FlatButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              })
+        ])
         ]),
-      ),
-    );
+          ),
+        );
   }
 }

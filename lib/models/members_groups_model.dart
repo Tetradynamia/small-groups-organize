@@ -1,36 +1,18 @@
+
+
 import 'package:flutter/material.dart';
+import 'package:sembast/sembast.dart';
 
 import '../models/group_member.dart';
 import '../models/groups.dart';
+import '../models/sembast_database.dart';
+
+
+enum Mode { CloudMode, LocalMode }
 
 class MembersGroupsModel with ChangeNotifier {
-  final List<Group> _groups = [
-    Group(
-      groupId: 'g1',
-      groupName: 'Kusipäät',
-      groupDescription: 'desc',
-    ),
-    Group(
-      groupId: 'g2',
-      groupName: 'Mustikat',
-      groupDescription: 'desc',
-    ),
-  ];
-  final List<GroupMember> _members = [
-    GroupMember(
-        memberId: 'm1', memberName: 'Pentti Ananas', groupName: 'Kusipäät'),
-    GroupMember(
-        memberId: 'm2', memberName: 'Pentti Urhola', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm2', memberName: '1', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm3', memberName: '2', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm4', memberName: '3', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm5', memberName: '4', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm6', memberName: '5', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm7', memberName: '6', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm8', memberName: '7', groupName: 'Kusipäät'),
-    GroupMember(memberId: 'm9', memberName: '8', groupName: 'Mustikat'),
-    GroupMember(memberId: 'm10', memberName: '9', groupName: 'Mustikat'),
-  ];
+  List<Group> _groups = [];
+  List<GroupMember> _members = [];
 
   List<Group> get groups {
     return [..._groups];
@@ -40,12 +22,18 @@ class MembersGroupsModel with ChangeNotifier {
     return [..._members];
   }
 
-  List<GroupMember> get shuffleMembers {
-    return [..._members];
-  }
-
   List<GroupMember> get availableMembers {
     return [..._members.where((member) => member.isAbsent == false)];
+  }
+
+  List<GroupMember> thisGroupMembers(String id) {
+    return _members.where((member) => member.groupId == id).toList();
+  }
+
+  List<GroupMember> thisGroupAvailableMembers(String id) {
+    return thisGroupMembers(id)
+        .where((member) => member.isAbsent == false)
+        .toList();
   }
 
   Group findGroupById(String id) {
@@ -56,85 +44,146 @@ class MembersGroupsModel with ChangeNotifier {
     return _members.firstWhere((member) => member.memberId == id);
   }
 
-  void addGroup(Group group) {
+  Future<void> fetchAndSetGroupsMembers() async {
+    {
+      final groupRecordSnapshot = await _groupFolder.find(await _db);
+      List<Group> loadedG = [];
+
+      loadedG = groupRecordSnapshot.map((snapshot) {
+        final group = Group.fromJson(snapshot.value);
+        return group;
+      }).toList();
+
+      _groups = loadedG;
+
+      final memberRecordSnapshot = await _memberFolder.find(await _db);
+      List<GroupMember> loadedM = [];
+
+      final extracted = memberRecordSnapshot.map((snapshot) {
+        final member = GroupMember.fromJson(snapshot.value);
+        return member;
+      }).toList();
+      extracted.forEach((member) {
+        loadedM.add(GroupMember(
+          memberId: member.memberId,
+          groupId: member.groupId,
+          memberName: member.memberName,
+          isAbsent: false,
+        ));
+      });
+      _members = loadedM;
+
+    }
+  }
+
+  Future<void> addGroup(Group group) async {
     final newGroup = Group(
-        groupId: DateTime.now().toString(),
-        groupName: group.groupName,
-        groupDescription: group.groupDescription);
+      groupId: UniqueKey().toString(),
+      groupName: group.groupName,
+      groupDescription: group.groupDescription,
+    );
+
+    await _groupFolder.add(await _db, {
+      'groupId': newGroup.groupId,
+      'groupDescription': group.groupDescription,
+      'groupName': group.groupName,
+    });
+
     _groups.add(newGroup);
     notifyListeners();
   }
 
-  void updateGroup(String id, Group updatedGroup) {
+  Future<void> updateGroup(String id, Group updatedGroup) async {
     final groupIndex = _groups.indexWhere((group) => group.groupId == id);
+
     if (groupIndex >= 0) {
+      final finder = Finder(filter: Filter.equals('groupId', id));
+      await _groupFolder.update(
+          await _db,
+          {
+            'groupDescription': updatedGroup.groupDescription,
+            'groupName': updatedGroup.groupName,
+          },
+          finder: finder);
       _groups[groupIndex] = updatedGroup;
-    } else {
-      print('...');
+      notifyListeners();
     }
-    notifyListeners();
   }
 
-  void deleteGroup(String id) {
+  Future<void> deleteGroup(String id, Group group) async {
     var groupIndex = _groups.indexWhere((group) => group.groupId == id);
-    var name = _groups[groupIndex].groupName;
-    _groups.removeWhere((group) => group.groupId == id);
 
-    _members.removeWhere((member) => member.groupName == name);
+    var groupId = group.groupId;
+    List<GroupMember> groupMembers = [];
+    groupMembers.addAll(_members.where((member) => member.groupId == groupId));
+
+    final finder = Finder(filter: Filter.equals('groupId', id));
+    await _groupFolder.delete(await _db, finder: finder);
+
+    if (groupMembers.isNotEmpty) {
+      groupMembers.forEach((member) {
+        removeMember(member.memberId);
+      });
+    }
+
+
+
+    _groups.removeAt(groupIndex);
+
     notifyListeners();
   }
 
-  void toggleAbsent(GroupMember member) {
-    final memberIndex = _members.indexOf(member);
-    _members[memberIndex].toggleIsAbsent();
-    notifyListeners();
-  }
-
-  void addMember(GroupMember member) {
+  Future<void> addMember(GroupMember member) async {
     final newMember = GroupMember(
-        memberId: DateTime.now().toString(),
-        memberName: member.memberName,
-        groupName: member.groupName);
+      memberId: UniqueKey().toString(),
+      memberName: member.memberName,
+      groupId: member.groupId,
+      isAbsent: member.isAbsent,
+    );
+
+    await _memberFolder.add(await _db, {
+      'memberId': newMember.memberId,
+      'memberName': newMember.memberName,
+      'groupId': newMember.groupId,
+    });
+
     _members.insert(0, newMember);
     notifyListeners();
   }
 
-  void updateMember(String id, GroupMember updatedMember) {
-    final groupIndex = _members.indexWhere((member) => member.memberId == id);
-    if (groupIndex >= 0) {
-      _members[groupIndex] = updatedMember;
-    } else {
-      print('...');
-    }
-    notifyListeners();
-  }
+  Future<void> removeMember(String id) async {
+ 
 
-  void removeMember (String id) {
-    
+    final finder = Finder(filter: Filter.equals('memberId', id));
+    await _memberFolder.delete(await _db, finder: finder);
+
     _members.removeWhere((member) => member.memberId == id);
-  }
-
-  List mebersShuffle() {
-    List<GroupMember> shuff = _members;
-    shuff.shuffle();
-    List f = [];
-    var numberOfGroups = 4;
-    var groupSize = (shuff.length / numberOfGroups).round();
-
-    for (var i = 0; i < numberOfGroups; i += 1) {
-      if (shuff.length >= groupSize) {
-        f.add(shuff.sublist(shuff.length - groupSize, shuff.length));
-        shuff.removeRange(shuff.length - groupSize, shuff.length);
-      }
-    }
-
-    if (shuff.length > 0) {
-      for (var i = 0; i < shuff.length; i++) {
-        f[i].add(shuff[i]);
-      }
-    }
-
     notifyListeners();
-    return f;
   }
+
+  Future<void> updateMember(String id, GroupMember updatedMember) async {
+    final groupIndex = _members.indexWhere((group) => group.memberId == id);
+    print(groupIndex);
+
+    if (groupIndex >= 0) {
+      final finder =
+          Finder(filter: Filter.equals('memberId', updatedMember.memberId));
+      await _memberFolder.update(
+          await _db,
+          {
+            'memberName': updatedMember.memberName,
+          },
+          finder: finder);
+      _members[groupIndex] = updatedMember;
+      notifyListeners();
+    }
+  }
+
+  static const String groupFolder = "Groups";
+  final _groupFolder = intMapStoreFactory.store(groupFolder);
+
+  static const String memberFolder = "Members";
+  final _memberFolder = intMapStoreFactory.store(memberFolder);
+
+  Future<Database> get _db async => await SDatabase.instance.database;
 }
