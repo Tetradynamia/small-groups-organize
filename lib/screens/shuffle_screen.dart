@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-
 import '../models/group_member.dart';
 import '../widgets/edit_history_entry.dart';
 import '../widgets/shuffle_item.dart';
@@ -19,7 +18,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
   final _buttonFocusNode = FocusNode();
   int _radioValue = -1;
   var _expanded = true;
-  
+
   var _isInit = true;
 
   // Variables to hold questions list and current question
@@ -67,7 +66,6 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
           didChangeDependencies();
           _expanded = false;
         } else {
-          print('shit');
           return;
         }
         break;
@@ -87,7 +85,6 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
 
           _expanded = false;
         } else {
-          print('shit');
           return;
         }
 
@@ -140,7 +137,6 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                 padding: EdgeInsets.only(
                   left: 8,
                   right: 8,
-                  
                 ),
                 height: MediaQuery.of(context).size.height * 0.36,
                 child: SingleChildScrollView(
@@ -152,7 +148,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                         ),
                         child: Column(
                           children: [
-                             const Text('Choose either:'),
+                            const Text('Choose either:'),
                             Column(
                               children: <Widget>[
                                 Row(
@@ -161,7 +157,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                         value: 0,
                                         groupValue: _radioValue,
                                         onChanged: _handleRadioValueChange),
-                                   const Text('number of small groups'),
+                                    const Text('number of small groups'),
                                   ],
                                 ),
                                 Row(
@@ -170,7 +166,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                         value: 1,
                                         groupValue: _radioValue,
                                         onChanged: _handleRadioValueChange),
-                                   const Text('size of small groups'),
+                                    const Text('size of small groups'),
                                   ],
                                 ),
                               ],
@@ -185,8 +181,10 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                     labelText: 'Give an integer.',
                                   ),
                                   textInputAction: TextInputAction.done,
-                                  onFieldSubmitted: (_) {FocusScope.of(context)
-                                          .requestFocus(_buttonFocusNode);},
+                                  onFieldSubmitted: (_) {
+                                    FocusScope.of(context)
+                                        .requestFocus(_buttonFocusNode);
+                                  },
                                   keyboardType: TextInputType.number,
                                   controller: sizeController,
                                   validator: (value) {
@@ -222,7 +220,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                             _availableMembers.isNotEmpty &&
                                     _currentInGroups == null
                                 ? RaisedButton.icon(
-                                  focusNode: _buttonFocusNode,
+                                    focusNode: _buttonFocusNode,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
@@ -263,9 +261,9 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                         _currentInGroups = null;
                                       });
                                     },
-                                    label:const Text('Reset',
+                                    label: const Text('Reset',
                                         style: TextStyle(color: Colors.white)),
-                                    icon:const Icon(
+                                    icon: const Icon(
                                       Icons.refresh,
                                       color: Colors.white,
                                     ),
@@ -287,12 +285,15 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                         ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (dataSnapshot.error != null) {
-                      return const Center(child: const Text('An error occured!'));
+                      return const Center(
+                          child: const Text('An error occured!'));
                     } else if (Provider.of<DivideSmallGroups>(context,
                                 listen: false)
                             .latest ==
                         null) {
-                      return  Flexible(child: const Text('No small groups assigned!!'));
+                      return Flexible(
+                        child: const Text('No small groups assigned!'),
+                      );
                     } else {
                       return Flexible(
                         child: ShuffleItem(
@@ -319,18 +320,22 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                 label: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                   const Icon(Icons.save),
-                   const Text('Save'),
+                    const Icon(Icons.save),
+                    const Text('Save'),
                   ],
                 ),
                 onPressed: () {
                   if (Provider.of<DivideSmallGroups>(context, listen: false)
                           .latest ==
-                      null) { return <void>[];
+                      null) {
+                    return <void>[];
                   } else {
                     return showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
                               title: Text('Want to save?'),
                               content: EditHistoryEntry(
                                 null,
@@ -355,8 +360,8 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
               label: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                 const Icon(Icons.clear),
-                 const Text('Discard'),
+                  const Icon(Icons.clear),
+                  const Text('Discard'),
                 ],
               ),
               onPressed: () {

@@ -1,4 +1,4 @@
-package com.example.t3
+package com.tetra_hedron.small_groups_organize
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

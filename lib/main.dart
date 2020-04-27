@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: History()),
       ],
       child: MaterialApp(
-        title: 'MyShop',
+        title: 'small groups - ORGANIZE!',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

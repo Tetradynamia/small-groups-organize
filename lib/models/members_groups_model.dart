@@ -72,8 +72,7 @@ class MembersGroupsModel with ChangeNotifier {
         ));
       });
       _members = loadedM;
-      print(_members.length);
-      print(_groups.length);
+
     }
   }
 
@@ -96,7 +95,6 @@ class MembersGroupsModel with ChangeNotifier {
 
   Future<void> updateGroup(String id, Group updatedGroup) async {
     final groupIndex = _groups.indexWhere((group) => group.groupId == id);
-    print(groupIndex);
 
     if (groupIndex >= 0) {
       final finder = Finder(filter: Filter.equals('groupId', id));
@@ -154,8 +152,7 @@ class MembersGroupsModel with ChangeNotifier {
   }
 
   Future<void> removeMember(String id) async {
-    // final existingMemberIndex =
-    //     _members.indexWhere((member) => member.memberId == id);
+ 
 
     final finder = Finder(filter: Filter.equals('memberId', id));
     await _memberFolder.delete(await _db, finder: finder);

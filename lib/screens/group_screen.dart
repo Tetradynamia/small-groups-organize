@@ -70,7 +70,7 @@ class _GroupScreenState extends State<GroupScreen> {
                                 '${member.memberName} was marked as absent',
                                 textAlign: TextAlign.center,
                               ),
-                              duration: Duration(seconds: 1),
+                              duration: Duration(seconds: 5),
                             ));
                           }
                         },

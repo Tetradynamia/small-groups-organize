@@ -117,12 +117,10 @@ class DivideSmallGroups with ChangeNotifier {
           .map((subGroup) => subGroup.map((gm) => gm.toJson()).toList())
           .toList()
     });
-    print(groupId);
     notifyListeners();
   }
 
   Future<void> fetchLatest(String id) async {
-    print('fetching');
     final finder = Finder(filter: Filter.equals('groupId', id));
     final recordSnapshot = await _latestFolder.find(await _db, finder: finder);
 
@@ -131,7 +129,6 @@ class DivideSmallGroups with ChangeNotifier {
       return last;
     }).toList();
     if (ll.isEmpty) {
-      print('crap');
       _latest = null;
       return;
     }

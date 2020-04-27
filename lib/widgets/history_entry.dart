@@ -109,40 +109,42 @@ class _HistoryEntryState extends State<HistoryEntry> {
             ),
           ),
           if (_expanded)
-            Column(
-              children: <Widget>[
-                ...widget.entry.subGroups
-                    .map((subGroup) => (Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          child: Column(
-                            children: [
-                              Card(
-                                color: Theme.of(context).primaryColor,
-                                child: ListTile(
-                                  title: Text(
-                                    'Small group ${widget.entry.subGroups.indexOf(subGroup) + 1}:',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
+            Container(
+              child: Column(
+                children: <Widget>[
+                  ...widget.entry.subGroups
+                      .map((subGroup) => (Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Column(
+                              children: [
+                                Card(
+                                  color: Theme.of(context).primaryColor,
+                                  child: ListTile(
+                                    title: Text(
+                                      'Small group ${widget.entry.subGroups.indexOf(subGroup) + 1}:',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.white),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              ...subGroup.map(
-                                (member) => (Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: ListTile(
-                                    title: Text(member.memberName),
-                                  ),
-                                )),
-                              ),
-                            ],
-                          ),
-                        )))
-                    .toList(),
-              ],
+                                ...subGroup.map(
+                                  (member) => (Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: ListTile(
+                                      title: Text(member.memberName),
+                                    ),
+                                  )),
+                                ),
+                              ],
+                            ),
+                          )))
+                      .toList(),
+                ],
+              ),
             ),
         ],
       ),

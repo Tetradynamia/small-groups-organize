@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -185,7 +187,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
         if (_expanded)
           Card(
             child: Container(
-              height: 200,
+              height: min( groupData.length* 45.0 + 10,  200,),
               child: ListView.builder(
                 itemBuilder: (ctx, index) => Card(
                   shape: RoundedRectangleBorder(

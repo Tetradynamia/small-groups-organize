@@ -63,9 +63,12 @@ class GroupItem extends StatelessWidget {
                   style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
-              Text(
-                description,
-                style: TextStyle(color: Colors.white),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                child: Text(
+                  description,
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
