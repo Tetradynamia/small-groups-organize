@@ -9,5 +9,5 @@ App for dividing larger groups of people, such as students in class, into smalle
 
 
 
-![google-play-badge](https://user-images.githubusercontent.com/57911350/80810570-d157c180-8bcc-11ea-86f5-5f92159155da.png)(https://play.google.com/store/apps/details?id=com.tetra_hedron.small_groups_organize)
+<a href='https://play.google.com/store/apps/details?id=com.tetra_hedron.small_groups_organize&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>![google-play-badge](https://user-images.githubusercontent.com/57911350/80810570-d157c180-8bcc-11ea-86f5-5f92159155da.png)(https://play.google.com/store/apps/details?id=com.tetra_hedron.small_groups_organize)<img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.eps'/></a>
 
