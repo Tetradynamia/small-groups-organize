@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../screens/group_overview.dart';
 import '../screens/manage_groups_screen.dart';
+import '../screens/settings_screen.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
@@ -29,6 +30,15 @@ class MainDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context)
                   .pushReplacementNamed(ManageGroupsScreen.routeName);
+            },
+          ),
+         const Divider(),
+         ListTile(
+            leading: const Icon(Icons.settings),
+            title: const Text("Settings"),
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacementNamed(SettingsScreen.routeName);
             },
           ),
          const Divider(),
