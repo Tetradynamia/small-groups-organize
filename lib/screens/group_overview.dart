@@ -7,7 +7,7 @@ import '../widgets/drawer.dart';
 import '../widgets/groups_grid.dart';
 import '../screens/manage_groups_screen.dart';
 import '../models/members_groups_model.dart';
-import '../localizations/applocalization.dart';
+import '../localizations/localization_constants.dart';
 
 class GroupOverview extends StatelessWidget {
   static const routeName = '/groups-overview';
@@ -16,8 +16,7 @@ class GroupOverview extends StatelessWidget {
      
     return  Scaffold(
       appBar: AppBar(
-        title:  Text(AppLocalizations.of(context)
-                  .getTranslatedValue('home_page')),
+        title:  Text(getTranslation(context, 'my_groups')),
       ),
       body: FutureBuilder(
           future: Provider.of<MembersGroupsModel>(context, listen: false)

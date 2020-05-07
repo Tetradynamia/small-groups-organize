@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+
+import '../localizations/localization_constants.dart';
 import '../models/divide_small_groups.dart';
 import '../screens/group_screen.dart';
 import '../screens/history_screen.dart';
@@ -68,17 +70,17 @@ class _TabsScreenState extends State<TabsScreen> {
             BottomNavigationBarItem(
               backgroundColor: Theme.of(context).primaryColor,
               icon: const Icon(Icons.group),
-              title: const Text("Group"),
+              title:  Text(getTranslation(context, 'group')),
             ),
             BottomNavigationBarItem(
               backgroundColor: Theme.of(context).primaryColor,
               icon: const Icon(Icons.assignment),
-              title: const Text("Assign small groups"),
+              title:  Text(getTranslation(context, 'assign')),
             ),
             BottomNavigationBarItem(
               backgroundColor: Theme.of(context).primaryColor,
               icon: const Icon(Icons.archive),
-              title: const Text("Archive"),
+              title:  Text(getTranslation(context, 'archive')),
             )
           ],
         ),

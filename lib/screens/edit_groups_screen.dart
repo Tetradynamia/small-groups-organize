@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../models/groups.dart';
 import '../models/members_groups_model.dart';
+import '../localizations/localization_constants.dart';
 
 class EditGroupsScreen extends StatefulWidget {
   static const routeName = '/edit-groups';
@@ -94,7 +95,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
         child: Column(children: [
           TextFormField(
             initialValue: _initValues['name'],
-            decoration: InputDecoration(labelText: 'Name:'),
+            decoration: InputDecoration(labelText: getTranslation(context, 'edit_name_label')),
             textInputAction: TextInputAction.next,
             onFieldSubmitted: (_) {
         FocusScope.of(context)
@@ -102,7 +103,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
             },
             validator: (value) {
         if (value.isEmpty) {
-          return 'Please provide a valid name';
+          return getTranslation(context, 'name_validator');
         }
         return null;
             },
@@ -115,7 +116,7 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
           ),
           TextFormField(
             initialValue: _initValues['description'],
-            decoration: InputDecoration(labelText: 'Description:'),
+            decoration: InputDecoration(labelText: getTranslation(context, 'description_label')),
             maxLines: 3,
             keyboardType: TextInputType.multiline,
             focusNode: _descriptionFocusNode,
@@ -133,12 +134,12 @@ class _EditGroupsScreenState extends State<EditGroupsScreen> {
               child: Row(
                 children: <Widget>[
                   const Icon(Icons.save),
-                  const Text('Save'),
+                 Text(getTranslation(context, 'save')),
                 ],
               ),
               onPressed: _saveForm),
           FlatButton(
-              child: const Text('Cancel'),
+              child: Text(getTranslation(context, 'Cancel')),
               onPressed: () {
                 Navigator.of(context).pop();
               })

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t3/localizations/localization_constants.dart';
 
 
 import '../widgets/add_members.dart';
@@ -66,7 +67,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              title: const Text('Add member'),
+                              title:  Text(getTranslation(context, 'add_group')),
                               content: EditMembers(null, widget.group.groupId),
                             ),
                           );
@@ -79,7 +80,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              title: const Text('Edit group'),
+                              title:  Text(getTranslation(context, 'edit_group')),
                               content: EditGroupsScreen(widget.group.groupId),
                             ),
                           );
@@ -92,9 +93,9 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    title: const Text('Confirm delete'),
+                                    title:  Text(getTranslation(context, 'confirm_delete')),
                                     content: Text(
-                                        'Are you sure you want to delete ${widget.group.groupName}, all its members and saved small groups?'),
+                                        '${getTranslation(context, 'you_sure')} ${widget.group.groupName}, ${getTranslation(context, 'delete_all')}'),
                                     actions: <Widget>[
                                       FlatButton.icon(
                                         onPressed: () async {
@@ -124,8 +125,8 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                           Icons.delete,
                                           color: Colors.red,
                                         ),
-                                        label: const Text(
-                                          'Delete',
+                                        label:  Text(
+                                          getTranslation(context, 'delete'),
                                           style: TextStyle(color: Colors.black),
                                         ),
                                       ),
@@ -133,7 +134,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
-                                        child: const Text('Cancel',
+                                        child:  Text(getTranslation(context, 'cancel'),
                                             style:
                                                 TextStyle(color: Colors.black)),
                                       )
@@ -150,8 +151,8 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                           const  Icon(Icons.person_add),
-                          const  Text(
-                              'Add members',
+                            Text(
+                              getTranslation(context, 'add_members'),
                             ),
                           ],
                         ),
@@ -161,7 +162,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                         child: Row(
                           children: <Widget>[
                            const Icon(Icons.edit),
-                           const Text('Edit group'),
+                            Text(getTranslation(context, 'edit_group')),
                           ],
                         ),
                       ),
@@ -173,7 +174,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                               Icons.delete,
                               color: Colors.red,
                             ),
-                            const Text('Remove group'),
+                             Text(getTranslation(context, 'remove_group')),
                           ],
                         ),
                       )
@@ -210,7 +211,7 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10.0),
                                     ),
-                                    title: const Text('Edit member'),
+                                    title:  Text(getTranslation(context, 'edit_member')),
                                     content: EditMembers(
                                         groupData[index].memberId,
                                         widget.group.groupId),
@@ -230,9 +231,9 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                             borderRadius:
                                                 BorderRadius.circular(10.0),
                                           ),
-                                          title: const Text('Confirm remove'),
+                                          title:  Text(getTranslation(context, 'confirm_delete')),
                                           content: Text(
-                                              'Are you sure you want to remove ${groupData[index].memberName}?'),
+                                              '${getTranslation(context, 'you_sure')} ${groupData[index].memberName}?'),
                                           actions: <Widget>[
                                             FlatButton.icon(
                                               onPressed: () async {
@@ -259,8 +260,8 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                                 Icons.delete,
                                                 color: Colors.red,
                                               ),
-                                              label: const Text(
-                                                'Delete',
+                                              label:  Text(
+                                                getTranslation(context, 'delete'),
                                                 style: TextStyle(
                                                   color: Colors.black,
                                                 ),
@@ -270,8 +271,8 @@ class _ManageGroupsItemState extends State<ManageGroupsItem> {
                                               onPressed: () {
                                                 Navigator.of(context).pop();
                                               },
-                                              child: const Text(
-                                                'Cancel',
+                                              child:  Text(
+                                                getTranslation(context, 'cancel'),
                                                 style: TextStyle(
                                                   color: Colors.black,
                                                 ),

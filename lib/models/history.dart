@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:t3/models/group_member.dart';
-
 import 'package:sembast/sembast.dart';
+
+
+import '../models/group_member.dart';
 import '../models/sembast_database.dart';
 
 class HistoryItem {
@@ -121,7 +122,6 @@ class History with ChangeNotifier {
     await _historyFolder.delete(await _db, finder: finder);
 
     _history.removeAt(existingIndex);
-    print('object');
     notifyListeners();
   }
 

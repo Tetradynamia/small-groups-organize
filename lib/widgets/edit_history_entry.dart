@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t3/localizations/localization_constants.dart';
 
 import '../models/group_member.dart';
 import '../models/history.dart';
@@ -71,7 +72,7 @@ class _EditHistoryEntryState extends State<EditHistoryEntry> {
             TextFormField(
               autofocus: true,
               initialValue: _initValues['note'],
-              decoration: InputDecoration(labelText: 'Note:'),
+              decoration: InputDecoration(labelText: getTranslation(context, 'note')),
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (_) {
                 Navigator.of(context).pop();
@@ -89,12 +90,12 @@ class _EditHistoryEntryState extends State<EditHistoryEntry> {
             Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
               FlatButton.icon(
                   icon: const Icon(Icons.save),
-                  label: const Text('Save'),
+                  label:  Text(getTranslation(context, 'save')),
                   onPressed: () {
                     _saveForm();
                   }),
               FlatButton(
-                  child: const Text('Cancel'),
+                  child:  Text(getTranslation(context, 'cancel')),
                   onPressed: () {
                     Navigator.of(context).pop();
                   })

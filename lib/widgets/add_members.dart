@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t3/localizations/localization_constants.dart';
 
 import '../models/group_member.dart';
 import '../models/members_groups_model.dart';
@@ -103,14 +104,14 @@ class _EditMembersState extends State<EditMembers> {
                 TextFormField(
                   autofocus: true,
                   initialValue: _initValues['name'],
-                  decoration: InputDecoration(labelText: 'Name:'),
+                  decoration: InputDecoration(labelText: getTranslation(context, 'edit_name_label')),
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) {
                     Navigator.of(context).pop();
                   },
                   validator: (value) {
                     if (value.isEmpty) {
-                      return 'Please provide a valid name';
+                      return getTranslation(context, 'name_validator');
                     }
                     return null;
                   },
@@ -126,14 +127,14 @@ class _EditMembersState extends State<EditMembers> {
                     children: [
                       FlatButton.icon(
                           icon: const Icon(Icons.save, color: Colors.black),
-                          label: const Text(
-                            'Save',
+                          label:  Text(
+                            getTranslation(context, 'save'),
                             style: TextStyle(color: Colors.black),
                           ),
                           onPressed: _saveForm),
                       FlatButton(
-                          child: const Text(
-                            'Cancel',
+                          child:  Text(
+                            getTranslation(context, 'cancel'),
                             style: TextStyle(color: Colors.black),
                           ),
                           onPressed: () {

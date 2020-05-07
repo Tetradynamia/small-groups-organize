@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t3/localizations/localization_constants.dart';
 
 
 import '../widgets/manage_group_item.dart';
@@ -23,7 +24,7 @@ class ManageGroupsScreen extends StatelessWidget {
     final data = Provider.of<MembersGroupsModel>(context);
     final groups = data.groups;
     return Scaffold(
-      appBar: AppBar(title: const Text('Manage your groups')),
+      appBar: AppBar(title:  Text(getTranslation(context, 'manage_groups'))),
       drawer: MainDrawer(),
       body: RefreshIndicator(
         onRefresh: () => _refreshData(context),
@@ -51,7 +52,7 @@ class ManageGroupsScreen extends StatelessWidget {
                   shape:  RoundedRectangleBorder(
                     borderRadius:  BorderRadius.circular(10.0),
                   ),
-                  title: const Text('Add group'),
+                  title: Text(getTranslation(context, 'add_group')),
                   content: EditGroupsScreen(null)));
         },
       ),

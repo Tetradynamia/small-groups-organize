@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:t3/models/group_member.dart';
+
+import '../models/group_member.dart';
+import '../localizations/localization_constants.dart';
 
 class ShuffleItem extends StatelessWidget {
   final List<List<GroupMember>> _currentInGroups;
@@ -13,7 +15,7 @@ class ShuffleItem extends StatelessWidget {
         children: [
           ListTile(
             title: Text(
-                'Groups assigned: ${DateFormat('dd/MM/yyyy HH:mm').format(dateTime)}'),
+                '${getTranslation(context, 'assigned')} ${DateFormat('dd/MM/yyyy HH:mm').format(dateTime)}'),
           ),
           ..._currentInGroups
               .map((subGroup) => (Card(
@@ -27,7 +29,7 @@ class ShuffleItem extends StatelessWidget {
                           color: Theme.of(context).primaryColor,
                           child: ListTile(
                             title: Text(
-                              'Small group ${_currentInGroups.indexOf(subGroup) + 1}:',
+                              '${getTranslation(context, 'small_group')} ${_currentInGroups.indexOf(subGroup) + 1}:',
                               style:
                                   TextStyle(fontSize: 16, color: Colors.white),
                             ),

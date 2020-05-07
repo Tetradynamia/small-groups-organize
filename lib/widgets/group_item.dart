@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+
+import '../localizations/localization_constants.dart';
 import '../screens/tabs_screen.dart';
 import '../models/members_groups_model.dart';
+
 
 class GroupItem extends StatelessWidget {
   final String id;
@@ -56,7 +59,7 @@ class GroupItem extends StatelessWidget {
                 name,
                 style: TextStyle(fontSize: 20, color: Colors.white),
               ),
-              const Text('Members;'),
+               Text(getTranslation(context, 'members')),
               Consumer<MembersGroupsModel>(
                 builder: (ctx, data, _) => Text(
                   '${thisGroupMembers.length}',

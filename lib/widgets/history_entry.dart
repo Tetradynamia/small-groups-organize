@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:t3/localizations/localization_constants.dart';
 
 import '../widgets/edit_history_entry.dart';
 import '../models/history.dart';
@@ -54,7 +55,7 @@ class _HistoryEntryState extends State<HistoryEntry> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            title: const Text('Edit History Entry'),
+                            title:  Text(getTranslation(context, 'edit_history')),
                             content: EditHistoryEntry(
                               widget.entry.id,
                               widget.entry.subGroups,
@@ -74,9 +75,9 @@ class _HistoryEntryState extends State<HistoryEntry> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10.0),
                                 ),
-                                title: const Text('Confirm delete'),
-                                content: const Text(
-                                    'Are you sure you want to delete this entry?'),
+                                title:  Text(getTranslation(context, 'confirm_delete')),
+                                content:  Text(
+                                    getTranslation(context, 'you_sure')),
                                 actions: <Widget>[
                                   FlatButton.icon(
                                       onPressed: () {
@@ -89,15 +90,15 @@ class _HistoryEntryState extends State<HistoryEntry> {
                                         Icons.delete,
                                         color: Colors.red,
                                       ),
-                                      label: const Text(
-                                        'Delete',
+                                      label:  Text(
+                                        getTranslation(context, 'delete'),
                                         style: TextStyle(color: Colors.black),
                                       )),
                                   FlatButton(
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
-                                    child: const Text('Cancel',
+                                    child:  Text(getTranslation(context, 'cancel'),
                                         style: TextStyle(color: Colors.black)),
                                   )
                                 ],
@@ -123,7 +124,7 @@ class _HistoryEntryState extends State<HistoryEntry> {
                                   color: Theme.of(context).primaryColor,
                                   child: ListTile(
                                     title: Text(
-                                      'Small group ${widget.entry.subGroups.indexOf(subGroup) + 1}:',
+                                      '${getTranslation(context, 'small_group')} ${widget.entry.subGroups.indexOf(subGroup) + 1}:',
                                       style: TextStyle(
                                           fontSize: 16, color: Colors.white),
                                     ),

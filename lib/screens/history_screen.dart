@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t3/localizations/localization_constants.dart';
 
 import '../models/history.dart';
 import '../widgets/history_entry.dart';
@@ -36,8 +37,8 @@ class HistoryScreen extends StatelessWidget {
                               .where((entry) => entry.groupId == gId)
                               .toList()
                               .length)
-                      : const Center(
-                          child: const Text('No entries added yet!'),
+                      :  Center(
+                          child:  Text(getTranslation(context, 'no_history')),
                         ),
                 ),
               ),
