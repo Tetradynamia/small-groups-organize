@@ -6,6 +6,7 @@ import '../widgets/edit_history_entry.dart';
 import '../widgets/shuffle_item.dart';
 import '../models/members_groups_model.dart';
 import '../models/divide_small_groups.dart';
+import '../localizations/localization_constants.dart';
 
 class ShuffleScreen extends StatefulWidget {
   @override
@@ -119,7 +120,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
               child: ListTile(
                 dense: true,
                 title: Text(
-                  'Members present: ${_availableMembers.length}',
+                  '${getTranslation(context, 'members_present')} ${_availableMembers.length}',
                   style: TextStyle(fontSize: 20),
                 ),
                 trailing: IconButton(
@@ -148,7 +149,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                         ),
                         child: Column(
                           children: [
-                            const Text('Choose either:'),
+                             Text(getTranslation(context, 'choose')),
                             Column(
                               children: <Widget>[
                                 Row(
@@ -157,7 +158,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                         value: 0,
                                         groupValue: _radioValue,
                                         onChanged: _handleRadioValueChange),
-                                    const Text('number of small groups'),
+                                     Text(getTranslation(context, 'number')),
                                   ],
                                 ),
                                 Row(
@@ -166,7 +167,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                         value: 1,
                                         groupValue: _radioValue,
                                         onChanged: _handleRadioValueChange),
-                                    const Text('size of small groups'),
+                                    Text(getTranslation(context, 'size')),
                                   ],
                                 ),
                               ],
@@ -178,7 +179,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                     const EdgeInsets.symmetric(horizontal: 8.0),
                                 child: TextFormField(
                                   decoration: InputDecoration(
-                                    labelText: 'Give an integer.',
+                                    labelText: getTranslation(context, 'give_integer'),
                                   ),
                                   textInputAction: TextInputAction.done,
                                   onFieldSubmitted: (_) {
@@ -189,27 +190,27 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                   controller: sizeController,
                                   validator: (value) {
                                     if (_radioValue == -1) {
-                                      return 'Please select the mode of operation';
+                                      return getTranslation(context, 'mode_operation');
                                     }
                                     if (value.isEmpty) {
-                                      return 'Please enter an integer value ';
+                                      return getTranslation(context, 'enter_integer');
                                     }
                                     if (int.tryParse(value) == null) {
-                                      return 'Please enter an integer value';
+                                      return getTranslation(context, 'enter_integer');
                                     }
                                     if (int.parse(value) <= 1) {
-                                      return 'Please enter a number greater than 1';
+                                      return getTranslation(context, 'greater_than');
                                     }
                                     if (_radioValue == 0 &&
                                         int.parse(value) >=
                                             _availableMembers.length) {
-                                      return 'Please enter a number smaller than ${_availableMembers.length})';
+                                      return '${getTranslation(context, 'smaller_than')} ${_availableMembers.length})';
                                     }
                                     if (_radioValue == 1 &&
                                         int.parse(value) >
                                             (_availableMembers.length) /
                                                 2.round()) {
-                                      return 'Please enter a number smaller than ${(_availableMembers.length) / 2.floor().toInt()})';
+                                      return '${getTranslation(context, 'smaller_than')} ${(_availableMembers.length) / 2.floor().toInt()})';
                                     }
 
                                     return null;
@@ -236,7 +237,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                         _handleSmallGroups();
                                       }
                                     },
-                                    label: const Text('Assign small groups',
+                                    label:  Text(getTranslation(context,'assign'),
                                         style: TextStyle(color: Colors.white)),
                                     icon: const Icon(
                                       Icons.refresh,
@@ -261,7 +262,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                                         _currentInGroups = null;
                                       });
                                     },
-                                    label: const Text('Reset',
+                                    label:  Text(getTranslation(context, 'reset'),
                                         style: TextStyle(color: Colors.white)),
                                     icon: const Icon(
                                       Icons.refresh,
@@ -285,14 +286,14 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                         ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (dataSnapshot.error != null) {
-                      return const Center(
-                          child: const Text('An error occured!'));
+                      return  Center(
+                          child:  Text(getTranslation(context, 'error_occured')));
                     } else if (Provider.of<DivideSmallGroups>(context,
                                 listen: false)
                             .latest ==
                         null) {
                       return Flexible(
-                        child: const Text('No small groups assigned!'),
+                        child:  Text(getTranslation(context, 'no_groups')),
                       );
                     } else {
                       return Flexible(
@@ -321,7 +322,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     const Icon(Icons.save),
-                    const Text('Save'),
+                     Text(getTranslation(context, 'save')),
                   ],
                 ),
                 onPressed: () {
@@ -336,7 +337,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10.0),
                               ),
-                              title: Text('Want to save?'),
+                              title: Text(getTranslation(context, 'want_save')),
                               content: EditHistoryEntry(
                                 null,
                                 Provider.of<DivideSmallGroups>(context,
@@ -361,7 +362,7 @@ class _ShuffleScreenState extends State<ShuffleScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   const Icon(Icons.clear),
-                  const Text('Discard'),
+                   Text(getTranslation(context, 'discard')),
                 ],
               ),
               onPressed: () {

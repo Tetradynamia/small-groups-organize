@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:t3/localizations/localization_constants.dart';
+
 
 
 import '../screens/group_overview.dart';
 import '../screens/manage_groups_screen.dart';
+import '../screens/settings_screen.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
@@ -17,7 +20,7 @@ class MainDrawer extends StatelessWidget {
         const  Divider(),
           ListTile(
             leading: const Icon(Icons.group),
-            title: const Text("Group overview"),
+            title:  Text(getTranslation(context, 'my_groups')),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(GroupOverview.routeName);
             },
@@ -25,10 +28,19 @@ class MainDrawer extends StatelessWidget {
           Divider(),
           ListTile(
             leading: const Icon(Icons.edit),
-            title: const Text("Manage groups"),
+            title:  Text(getTranslation(context, 'manage_groups')),
             onTap: () {
               Navigator.of(context)
                   .pushReplacementNamed(ManageGroupsScreen.routeName);
+            },
+          ),
+         const Divider(),
+         ListTile(
+            leading: const Icon(Icons.settings),
+            title:  Text(getTranslation(context, 'settings')),
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacementNamed(SettingsScreen.routeName);
             },
           ),
          const Divider(),

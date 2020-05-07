@@ -143,6 +143,8 @@ class DivideSmallGroups with ChangeNotifier {
   }
 }
 
+
+
 class LatestItem {
   final DateTime dateTime;
   final String groupId;

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import '../localizations/localization_constants.dart';
 
 
 
 class Start extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: const Text(
-        'You have not added any groups yet! Tap the button below to add some!', textAlign: TextAlign.center,
+    return  Center(
+      child:  Text(
+        getTranslation(context, 'start'), textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 20,
           
